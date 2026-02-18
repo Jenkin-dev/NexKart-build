@@ -149,7 +149,7 @@ const Login = () => {
             icon={
               <Image
                 style={styles.icon}
-                source={require("./assets/Images/faceid.png")}
+                source={require("../../assets/images/faceid.png")}
               />
             }
             textColor="#4C69FF"
