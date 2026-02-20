@@ -35,7 +35,7 @@ const Home = () => {
   return (
     <SafeView style={{ paddingHorizontal: 20, marginTop: 20 }}>
       <View style={styles.top}>
-        <Pressable onPress={() => router.navigate("/index")}>
+        <Pressable onPress={() => router.push("/app/Sidemenu")}>
           <Image
             style={{ width: 20, height: 20, resizeMode: "center" }}
             source={
