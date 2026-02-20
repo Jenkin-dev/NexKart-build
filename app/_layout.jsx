@@ -34,6 +34,9 @@ const RootLayout = () => {
       <Stack.Screen name="Onboarding1" />
       <Stack.Screen name="Onboarding2" />
       <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="Mobile" />
+      <Stack.Screen name="Terms" />
+      <Stack.Screen name="Sidemenu" />
       {/* <Stack.Screen name="Signup" />
       <Stack.Screen name="Login" /> */}
     </Stack>

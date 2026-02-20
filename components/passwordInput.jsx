@@ -58,8 +58,9 @@ const Passwordinput = ({ head, onChangeText, value }) => {
           onChangeText={onChangeText}
           style={styles.input}
           placeholder={head}
-          placeholderTextColor={"grey"}
+          placeholderTextColor={"#4C69FF"}
           secureTextEntry={!passwordVisible}
+          color="#4C69FF"
         />
 
         <Pressable

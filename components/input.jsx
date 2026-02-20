@@ -20,6 +20,7 @@ const Input = ({ inputtype, value, onChangeText, keyboardType, style }) => {
       height: 56,
       fontFamily: "medium",
       width: "90%",
+      color: "#4C69FF",
     },
   });
   return (
@@ -38,7 +39,7 @@ const Input = ({ inputtype, value, onChangeText, keyboardType, style }) => {
           onChangeText={onChangeText}
           style={styles.input}
           placeholder={inputtype}
-          placeholderTextColor={"grey"}
+          placeholderTextColor={"#4C69FF"}
           keyboardType={keyboardType}
         />
       </View>
