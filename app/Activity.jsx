@@ -6,16 +6,18 @@ import {
   StyleSheet,
   Text,
   ScrollView,
+  Dimensions,
 } from "react-native";
 import { router } from "expo-router";
 import Activities from "../components/Activities";
 import Button from "../components/button";
 import Activityinfo from "../components/Activityinfo";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Activity = () => {
   return (
-    <SafeView style={styles.safeview}>
+    <SafeAreaView style={styles.safeview}>
       <View>
         <View style={styles.icons}>
           <TouchableOpacity onPress={() => router.push("/Sidemenu")}>
@@ -202,9 +204,12 @@ const Activity = () => {
           </View>
         </View>
       </ScrollView>
-    </SafeView>
+    </SafeAreaView>
   );
 };
+
+const { width } = Dimensions.get("screen");
+console.log(width);
 const styles = StyleSheet.create({
   pageHead: { fontFamily: "alexandriaBold", paddingBottom: 30, fontSize: 25 },
 
@@ -235,6 +240,12 @@ const styles = StyleSheet.create({
     borderBottomColor: "#E5E5E5",
     borderBottomWidth: 2,
   },
-  safeview: { paddingHorizontal: 20, marginTop: 20, paddingVertical: 30 },
+  safeview: {
+    paddingHorizontal: 20,
+    marginTop: 20,
+    paddingVertical: 30,
+    flex: 1,
+    marginHorizontal: width * 0.02,
+  },
 });
 export default Activity;
