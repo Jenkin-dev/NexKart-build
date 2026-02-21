@@ -14,8 +14,10 @@ import Button from "../components/button";
 import Activityinfo from "../components/Activityinfo";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useState } from "react";
 
 const Activity = () => {
+  const [cleared, setCleared] = useState(false);
   return (
     <SafeAreaView style={styles.safeview}>
       <View>
@@ -64,16 +66,18 @@ const Activity = () => {
               justifyContent: "space-between",
               marginVertical: 20,
               alignItems: "baseline",
+              display: cleared ? "none" : undefined,
             }}
           >
             <Text style={{ fontFamily: "alexandriaMedium", fontSize: 23 }}>
               Important
             </Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => setCleared(true)}>
               <Text
                 style={{
                   fontFamily: "alexandriaRegular",
                   fontSize: 18,
+
                   color: "#FF4C96",
                 }}
               >
@@ -81,7 +85,12 @@ const Activity = () => {
               </Text>
             </TouchableOpacity>
           </View>
-          <View style={styles.activityinfo}>
+          <View
+            style={[
+              styles.activityinfo,
+              { display: cleared ? "none" : undefined },
+            ]}
+          >
             <Activityinfo
               icon={
                 <Image
@@ -210,6 +219,7 @@ const Activity = () => {
 
 const { width } = Dimensions.get("screen");
 console.log(width);
+
 const styles = StyleSheet.create({
   pageHead: { fontFamily: "alexandriaBold", paddingBottom: 30, fontSize: 25 },
 
@@ -219,7 +229,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 
-  activityinfo: { marginHorizontal: 20 },
+  activityinfo: {
+    paddingHorizontal: 20,
+    // backgroundColor: "green",
+  },
 
   boundaryLine: { borderColor: "grey", borderWidth: 0.4 },
 
