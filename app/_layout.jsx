@@ -38,6 +38,7 @@ const RootLayout = () => {
       {/* Main App Screens */}
       <Stack.Screen name="Home" />
       <Stack.Screen name="Sidemenu" />
+      <Stack.Screen name="Account" />
     </Stack>
   );
 };

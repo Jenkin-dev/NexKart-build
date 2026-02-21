@@ -1,4 +1,11 @@
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import SafeView from "../components/safe-view";
 import { useState } from "react";
 import { router } from "expo-router";
@@ -35,7 +42,7 @@ const Home = () => {
   return (
     <SafeView style={{ paddingHorizontal: 20, marginTop: 20 }}>
       <View style={styles.top}>
-        <Pressable onPress={() => router.push("/app/Sidemenu")}>
+        <TouchableOpacity onPress={() => router.push("/Sidemenu")}>
           <Image
             style={{ width: 20, height: 20, resizeMode: "center" }}
             source={
@@ -44,7 +51,7 @@ const Home = () => {
                 : require("../assets/images/menu.png")
             }
           />
-        </Pressable>
+        </TouchableOpacity>
         <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
           <Text style={{ fontFamily: "alexandriaRegular", fontSize: 20 }}>
             My Cart
