@@ -39,7 +39,7 @@ const Input = ({ inputtype, value, onChangeText, keyboardType, style }) => {
           onChangeText={onChangeText}
           style={styles.input}
           placeholder={inputtype}
-          placeholderTextColor={"#4C69FF"}
+          placeholderTextColor={"#a4b2f5"}
           keyboardType={keyboardType}
         />
       </View>

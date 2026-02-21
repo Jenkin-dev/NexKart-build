@@ -58,7 +58,7 @@ const Passwordinput = ({ head, onChangeText, value }) => {
           onChangeText={onChangeText}
           style={styles.input}
           placeholder={head}
-          placeholderTextColor={"#4C69FF"}
+          placeholderTextColor={"#a4b2f5"}
           secureTextEntry={!passwordVisible}
           color="#4C69FF"
         />
