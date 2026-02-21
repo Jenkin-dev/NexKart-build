@@ -1,11 +1,19 @@
 import { TouchableOpacity, Text } from "react-native";
 
-const Button = ({ text, style, icon, textColor, fontfamily, onPress }) => {
+const Button = ({
+  text,
+  style,
+  icon,
+  textColor,
+  fontfamily,
+  onPress,
+  bgcolor,
+}) => {
   return (
     <TouchableOpacity
       onPress={onPress}
       style={{
-        backgroundColor: "#3DBECB",
+        backgroundColor: bgcolor ? bgcolor : "#3DBECB",
         height: 55,
         borderRadius: 10,
         justifyContent: "center",
