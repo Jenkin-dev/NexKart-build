@@ -45,7 +45,7 @@ const OTP = () => {
             </Text>
 
             <OtpInput
-              numberOfDigits={4}
+              numberOfDigits={6}
               focusColor={"#4C69FF"}
               onTextChange={(text) => {
                 console.log("the current input is", text);
