@@ -12,7 +12,7 @@ import Input from "../components/input";
 import Button from "../components/button";
 import { router, useLocalSearchParams } from "expo-router";
 import { OtpInput } from "react-native-otp-entry";
-import { useSignupStore } from "../store/useSignupStore";
+// import { useSignupStore } from "../store/useSignupStore";
 import { useState } from "react";
 
 const OTP = () => {
@@ -24,7 +24,7 @@ const OTP = () => {
   //   console.log(userpassword, "is the user's password");
   //   const phoneNumber = Number(phone);
 
-  const phone = useSignupStore((s) => s.phone);
+  // const phone = useSignupStore((s) => s.phone);
 
   //   console.log(phoneNumber, typeof phoneNumber);
   return (
@@ -41,7 +41,7 @@ const OTP = () => {
               }}
             >
               Enter the 4 digit PIN that we sent to:
-              <Text style={{ fontFamily: "alexandriaRegular" }}>{phone}</Text>
+              <Text style={{ fontFamily: "alexandriaRegular" }}>{}</Text>
             </Text>
 
             <OtpInput
@@ -68,7 +68,7 @@ const OTP = () => {
             />
 
             <Text>
-              Are sure this is your phone number? <Text>{phone}</Text>
+              Are sure this is your phone number? <Text>{}</Text>
             </Text>
           </ScrollView>
         </View>

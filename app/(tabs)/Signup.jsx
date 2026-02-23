@@ -18,16 +18,39 @@ import Passwordinput from "../../components/passwordInput";
 import Button from "../../components/button";
 import { useState } from "react";
 import Socialmedia from "../../components/socialmedia";
-import { useSignupStore } from "../../store/useSignupStore";
+// import { useSignupStore } from "../../store/useSignupStore";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SecureStore from "expo-secure-store";
+import { useUsername } from "../../store/useUsername";
 
 const Signup = () => {
-  const setUser = useSignupStore((s) => s.setUser);
+  // const setUser = useSignupStore((s) => s.setUser);
+
   const [password, setPassword] = useState("");
   const [cpassword, setCpassword] = useState("");
-  const [username, setUsername] = useState("");
   const { width } = Dimensions.get("screen");
   const { height } = Dimensions.get("screen");
   const passwordLength = password.length;
+  const { zusUsername } = useUsername();
+
+  const [username, setUsername] = useState(zusUsername);
+
+  const storeUser = async (userName) => {
+    try {
+      await AsyncStorage.setItem("User", userName);
+    } catch (e) {
+      console.log("An error occured", e);
+    }
+  };
+
+  const storePassword = async (passWord) => {
+    try {
+      console.log("The selected password is", passWord);
+      await SecureStore.setItemAsync("Userpassword", passWord);
+    } catch (e) {
+      console.log("An error occured", e);
+    }
+  };
 
   // console.log(useSignupStore);
   // console.log(password.length);
@@ -86,7 +109,9 @@ const Signup = () => {
           fontfamily="alexandriaSemibold"
           onPress={() => {
             if (password === cpassword && password !== "") {
-              setUser(username, password);
+              // setUser(username, password);
+              storeUser(username);
+              storePassword(password);
               router.push("../Mobile");
               console.log("The username is:", username);
               console.log("The password inputed is:", password);

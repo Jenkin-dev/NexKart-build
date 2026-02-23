@@ -41,6 +41,10 @@ const Sidemenu = () => {
           <TouchableOpacity>
             <Text style={styles.text}>Support</Text>
           </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => router.navigate("./(tabs)/Signup")}>
+            <Text style={styles.text}>Logout</Text>
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
     </ImageBackground>

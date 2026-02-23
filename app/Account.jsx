@@ -11,11 +11,33 @@ import {
 import SafeView from "../components/safe-view";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useSignupStore } from "../store/useSignupStore";
+// import { useSignupStore } from "../store/useSignupStore";
+import { useState } from "react";
+import { useUsername } from "../store/useUsername";
+import { useEffect } from "react";
+import * as SecureStore from "expo-secure-store";
 
 const Account = () => {
-  const phone = useSignupStore((s) => s.phone);
-  const savedUsername = useSignupStore((s) => s.username);
+  const { zusUsername } = useUsername();
+  // const phone = useSignupStore((s) => s.phone);
+  const [phone, setPhone] = useState();
+  const [storedUser, setStoredUser] = useState("");
+
+  useEffect(() => {
+    const getPhone = async () => {
+      try {
+        const phone = await SecureStore.getItemAsync("PhoneNumber");
+        if (phone) {
+          setPhone(phone);
+          console.log("the phone number is:", phone);
+        }
+      } catch (e) {
+        console.log("An error occcured", e);
+      }
+    };
+
+    getPhone();
+  }, []);
   return (
     // <SafeView style={{ paddingHorizontal: 20, marginTop: 20 }}>
     <ImageBackground
@@ -33,12 +55,12 @@ const Account = () => {
               source={require("../assets/images/menu.png")}
             />
           </TouchableOpacity>
-          <Pressable>
+          <TouchableOpacity>
             <Image
               style={styles.image}
               source={require("../assets/images/settings.png")}
             />
-          </Pressable>
+          </TouchableOpacity>
         </View>
         <Text style={styles.pageHead}>Account</Text>
         <View style={styles.details}>
@@ -49,7 +71,7 @@ const Account = () => {
             />
           </View>
           <View>
-            <Text style={styles.username}>{savedUsername}</Text>
+            <Text style={styles.username}>{zusUsername}</Text>
             <Text style={styles.phone}>{phone}</Text>
             <TouchableOpacity style={styles.profileButton}>
               <Text style={styles.profile}>View Profile</Text>

@@ -17,15 +17,22 @@ import Socialmedia from "../../components/socialmedia";
 import TopTab from "../../components/toptab";
 
 import Passwordinput from "../../components/passwordInput";
-import { useSignupStore } from "../../store/useSignupStore";
+// import { useSignupStore } from "../../store/useSignupStore";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect } from "react";
+import * as SecureStore from "expo-secure-store";
+import { useUsername } from "../../store/useUsername";
 
 const Login = () => {
+  const { zusUsername, setZusUsername } = useUsername();
   const [password, setPassword] = useState("");
   const { width } = Dimensions.get("screen");
   const { height } = Dimensions.get("screen");
-  const savedPassword = useSignupStore((s) => s.password);
-  const savedUsername = useSignupStore((s) => s.username);
-  console.log(savedUsername, savedPassword);
+  // const savedPassword = useSignupStore((s) => s.password);
+  // const savedUsername = useSignupStore((s) => s.username);
+  // console.log(savedUsername, savedPassword);
+  const [storedUser, setStoredUser] = useState("");
+  const [storedPassword, setStoredPassword] = useState("");
   // const { userpassword } = useLocalSearchParams();
 
   // console.log(userpassword);
@@ -77,6 +84,38 @@ const Login = () => {
     },
   });
 
+  useEffect(() => {
+    const getUserName = async () => {
+      try {
+        const userName = await AsyncStorage.getItem("User");
+        if (userName) {
+          setZusUsername(userName);
+          setStoredUser(userName);
+        }
+        console.log("Retrieved username", userName);
+        console.log("zustand username", storedUser);
+      } catch (e) {
+        console.log("an error occured", e);
+      }
+    };
+
+    getUserName();
+
+    const getPassword = async () => {
+      try {
+        const passWord = await SecureStore.getItemAsync("Userpassword");
+        if (passWord) {
+          setStoredPassword(passWord);
+        }
+        console.log("Retrieved password", passWord);
+      } catch (e) {
+        console.log("an error occured", e);
+      }
+    };
+
+    getPassword();
+  }, []);
+
   return (
     <SafeView>
       <TopTab style={{ position: "relative", top: 0.025 * height }} />
@@ -88,7 +127,8 @@ const Login = () => {
             <View>
               <Text style={styles.text1}>Hello again,</Text>
               <Text style={styles.text2}>
-                {savedUsername ? savedUsername : "Undefined"}
+                {/* {savedUsername ? savedUsername : userName} */}
+                {zusUsername}
               </Text>
 
               <TouchableOpacity onPress={() => router.push("/Signup")}>
@@ -123,10 +163,10 @@ const Login = () => {
                 marginVertical: 15,
               }}
               onPress={() => {
-                if (password.length >= 6 && password === savedPassword) {
+                if (password.length >= 6 && password === storedPassword) {
                   router.push("../Terms");
                   console.log("The password is:", password);
-                } else if (password !== savedPassword) {
+                } else if (password !== storedPassword) {
                   Alert.alert(
                     "Incorrect Password",
                     "Check the password and try again ",

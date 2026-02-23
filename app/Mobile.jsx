@@ -11,16 +11,26 @@ import Input from "../components/input";
 import { useState } from "react";
 import Button from "../components/button";
 import { router, useLocalSearchParams } from "expo-router";
-import { useSignupStore } from "../store/useSignupStore";
+import * as SecureStore from "expo-secure-store";
+// import { useSignupStore } from "../store/useSignupStore";
 
 const Mobile = () => {
   const [country, setCountry] = useState("Nigeria");
   const [phoneNumber, setPhoneNumber] = useState("+234");
-  const setPhone = useSignupStore((s) => s.setPhone);
+  // const setPhone = useSignupStore((s) => s.setPhone);
   // const { userpassword } = useLocalSearchParams();
   // const UserPassword = userpassword;
   // console.log(userpassword, UserPassword);
-  console.log(typeof phoneNumber, phoneNumber);
+  // console.log(typeof phoneNumber, phoneNumber);
+
+  const storePhone = async (phone) => {
+    try {
+      await SecureStore.setItemAsync("PhoneNumber", phone);
+    } catch (e) {
+      console.log("an error occured", e);
+    }
+  };
+
   return (
     <SafeView style={{ paddingHorizontal: 20 }}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={"height"}>
@@ -50,10 +60,11 @@ const Mobile = () => {
                 "Make sure you typed in a valid phone number",
               );
             } else {
-              setPhone(phoneNumber);
+              // setPhone(phoneNumber);
+              storePhone(phoneNumber);
               router.push({
                 pathname: "./OTP",
-                params: { number: phoneNumber },
+                // params: { number: phoneNumber },
               });
             }
           }}

@@ -9,36 +9,11 @@ import {
 import SafeView from "../components/safe-view";
 import { useState } from "react";
 import { router } from "expo-router";
+import SpecialDeals from "../components/specialdeals";
 
 const Home = () => {
   const [incoming, setIncoming] = useState(false);
 
-  const styles = StyleSheet.create({
-    numberText: {
-      backgroundColor: "#FF4C96",
-      borderRadius: 20,
-      width: 24,
-      height: 24,
-
-      // flexDirection: "row",
-      justifyContent: "center",
-    },
-    subtext: {
-      fontFamily: "alexandriaRegular",
-      fontSize: 15,
-      alignSelf: "center",
-      color: "white",
-      // textAlign: "center",
-    },
-
-    top: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-    },
-
-    cardsContainer: {},
-  });
   return (
     <SafeView style={{ paddingHorizontal: 20, marginTop: 20 }}>
       <View style={styles.top}>
@@ -63,10 +38,38 @@ const Home = () => {
       </View>
 
       <View style={styles.cardsContainer}>
-        <View></View>
+        <View>
+          <SpecialDeals />
+        </View>
       </View>
     </SafeView>
   );
 };
 
+const styles = StyleSheet.create({
+  numberText: {
+    backgroundColor: "#FF4C96",
+    borderRadius: 20,
+    width: 24,
+    height: 24,
+
+    // flexDirection: "row",
+    justifyContent: "center",
+  },
+  subtext: {
+    fontFamily: "alexandriaRegular",
+    fontSize: 15,
+    alignSelf: "center",
+    color: "white",
+    // textAlign: "center",
+  },
+
+  top: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+
+  cardsContainer: {},
+});
 export default Home;

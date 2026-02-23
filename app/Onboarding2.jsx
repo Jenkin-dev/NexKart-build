@@ -9,7 +9,7 @@ const Onboarding2 = () => {
       text1="Immerse in a seamless online shopping experienxe"
       text2="We promise that you'll have the mist fuss-free time with us forever"
       text3="Get started"
-      nextPage="/(tabs)/Signup"
+      nextPage="/(tabs)/Login"
       picture={require("../assets/images/onboarding_image2.png")}
       color={{ color: "white" }}
     />
