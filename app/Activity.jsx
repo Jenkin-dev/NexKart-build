@@ -35,7 +35,7 @@ const Activity = () => {
         <View style={styles.activity}>
           <Activities
             activityImage={require("../assets/images/order.png")}
-            activity={"Ordered"}
+            activity={"Wishlist"}
           />
 
           <Activities

@@ -189,7 +189,7 @@ const Login = () => {
             icon={
               <Image
                 style={styles.icon}
-                source={require("../../assets/images/faceid.png")}
+                source={require("../../assets/images/google.png")}
               />
             }
             textColor="#4C69FF"
@@ -199,7 +199,7 @@ const Login = () => {
               borderWidth: 2,
               marginBottom: 20,
             }}
-            text="Login with Face ID"
+            text="Continue with Google"
           />
         </View>
       </ScrollView>

@@ -8,6 +8,7 @@ const Button = ({
   fontfamily,
   onPress,
   bgcolor,
+  fontsize,
 }) => {
   return (
     <TouchableOpacity
@@ -30,7 +31,7 @@ const Button = ({
         style={{
           alignSelf: "center",
           color: textColor ? textColor : "white",
-          fontSize: 18,
+          fontSize: fontsize ? fontsize : 18,
           fontFamily: fontfamily ? fontfamily : "regular",
         }}
       >
