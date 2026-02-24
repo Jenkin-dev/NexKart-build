@@ -1,8 +1,8 @@
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
-const Activities = ({ activity, activityImage }) => {
+const Activities = ({ onPress, activity, activityImage }) => {
   return (
-    <TouchableOpacity style={{}}>
+    <TouchableOpacity style={{}} onPress={onPress}>
       <Image
         style={{ width: 30, height: 30, marginBottom: 10 }}
         source={activityImage}

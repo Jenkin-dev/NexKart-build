@@ -37,7 +37,12 @@ const Home = () => {
         <Input inputtype={"Search for a product"} />
       </LinearGradient>
       <SafeAreaView
-        style={{ paddingHorizontal: 20, marginVertical: 20, flex: 1 }}
+        style={{
+          paddingHorizontal: 20,
+          paddingVertical: 20,
+          flex: 1,
+          backgroundColor: "#bddcf6",
+        }}
       >
         <View
           style={[
@@ -172,7 +177,11 @@ const Home = () => {
           icon={
             <Image
               style={styles.icon}
-              source={require("../assets/images/search.png")}
+              source={
+                searching
+                  ? require("../assets/images/cancel.png")
+                  : require("../assets/images/search.png")
+              }
             />
           }
         />

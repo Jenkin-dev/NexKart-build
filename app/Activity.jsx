@@ -34,6 +34,7 @@ const Activity = () => {
       <ScrollView style={{ flex: 1 }}>
         <View style={styles.activity}>
           <Activities
+            onPress={() => router.push("./wishlist")}
             activityImage={require("../assets/images/order.png")}
             activity={"Wishlist"}
           />
@@ -54,7 +55,7 @@ const Activity = () => {
         <Button
           text={"View my orders"}
           fontfamily={"alexandriaLight"}
-          bgcolor={"white"}
+          bgcolor={"#bddcf6"}
           textColor={"#4C69FF"}
           style={styles.button}
         />
@@ -255,10 +256,11 @@ const styles = StyleSheet.create({
   },
   safeview: {
     paddingHorizontal: 20,
-    marginTop: 20,
+    // marginTop: 20,
     paddingVertical: 30,
     flex: 1,
-    marginHorizontal: width * 0.02,
+    // marginHorizontal: width * 0.02,
+    backgroundColor: "#bddcf6",
   },
 });
 export default Activity;

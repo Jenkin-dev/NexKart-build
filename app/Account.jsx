@@ -40,14 +40,15 @@ const Account = () => {
   }, []);
   return (
     // <SafeView style={{ paddingHorizontal: 20, marginTop: 20 }}>
-    <ImageBackground
-      source={require("../assets/images/dpimage.png")}
-      resizeMode="stretch"
-      blurRadius={5}
-      imageStyle={{ opacity: 0.5 }}
-      style={styles.container1}
-    >
-      <SafeAreaView style={styles.safeview}>
+
+    <SafeAreaView style={styles.safeview}>
+      <ImageBackground
+        source={require("../assets/images/dpimage.png")}
+        resizeMode="stretch"
+        blurRadius={5}
+        imageStyle={{ opacity: 0.5 }}
+        style={styles.container1}
+      >
         <View style={styles.icons}>
           <TouchableOpacity onPress={() => router.back()}>
             <Image
@@ -78,8 +79,8 @@ const Account = () => {
             </TouchableOpacity>
           </View>
         </View>
-      </SafeAreaView>
-    </ImageBackground>
+      </ImageBackground>
+    </SafeAreaView>
   );
 };
 
@@ -103,7 +104,12 @@ const styles = StyleSheet.create({
   details: { flexDirection: "row", gap: 20 },
   pageHead: { fontFamily: "alexandriaBold", paddingBottom: 30, fontSize: 25 },
   phone: { fontFamily: "alexandriaLight", fontSize: 15, marginBottom: 20 },
-  safeview: { paddingHorizontal: 20, marginTop: 20 },
+  safeview: {
+    paddingHorizontal: 20,
+    paddingVertica: 20,
+    backgroundColor: "#bddcf6",
+    flex: 1,
+  },
   profileButton: { backgroundColor: "blue", width: 100, borderRadius: 20 },
   username: { fontSize: 20, fontFamily: "alexandriaRegular" },
 });
