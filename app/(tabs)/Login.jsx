@@ -28,14 +28,10 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const { width } = Dimensions.get("screen");
   const { height } = Dimensions.get("screen");
-  // const savedPassword = useSignupStore((s) => s.password);
-  // const savedUsername = useSignupStore((s) => s.username);
-  // console.log(savedUsername, savedPassword);
+
   const [storedUser, setStoredUser] = useState("");
   const [storedPassword, setStoredPassword] = useState("");
-  // const { userpassword } = useLocalSearchParams();
 
-  // console.log(userpassword);
   const styles = StyleSheet.create({
     forgotPassword: {
       color: "#4C69FF",
@@ -126,10 +122,7 @@ const Login = () => {
           >
             <View>
               <Text style={styles.text1}>Hello again,</Text>
-              <Text style={styles.text2}>
-                {/* {savedUsername ? savedUsername : userName} */}
-                {zusUsername}
-              </Text>
+              <Text style={styles.text2}>{zusUsername}</Text>
 
               <TouchableOpacity onPress={() => router.push("/Signup")}>
                 <Text style={styles.text3}>This isn’t me</Text>
