@@ -9,6 +9,16 @@ import Button from "../components/button";
 
 const Carts = () => {
   const [empty, setEmpty] = useState(true);
+
+  const Addtocart = () => {
+    return (
+      <View>
+        <View></View>
+        <View></View>
+        <View></View>
+      </View>
+    );
+  };
   return (
     <SafeAreaView
       style={{
@@ -46,10 +56,10 @@ const Carts = () => {
         </View>
 
         <View style={[styles.cart, { display: empty ? "none" : undefined }]}>
+          {/* <WishedItems />
           <WishedItems />
           <WishedItems />
-          <WishedItems />
-          <WishedItems />
+          <WishedItems /> */}
         </View>
       </ScrollView>
       <Button

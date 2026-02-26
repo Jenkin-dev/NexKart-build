@@ -22,6 +22,76 @@ const Home = () => {
   const [searching, setSearching] = useState(false);
   const { height } = Dimensions.get("screen");
   // console.log(height);
+
+  const homeitems = [
+    {
+      id: "1",
+      source: require("../assets/images/mouse.png"),
+      noItems: "33 sold",
+      itemPrice: "USD 100.00",
+    },
+    {
+      id: "2",
+      source: require("../assets/images/phone.png"),
+      noItems: "8 sold",
+      itemPrice: "USD 360.00",
+    },
+    {
+      id: "3",
+      source: require("../assets/images/cardimage3.png"),
+      noItems: "6 sold",
+      itemPrice: "USD 80.00",
+    },
+    {
+      id: "4",
+      source: require("../assets/images/smartwatch.png"),
+      noItems: "Only 2 left",
+      itemPrice: "USD 280.00",
+    },
+    {
+      id: "5",
+      source: require("../assets/images/airpod.png"),
+      noItems: "15 sold",
+      itemPrice: "USD 30.00",
+    },
+    {
+      id: "6",
+      source: require("../assets/images/phone2.png"),
+      noItems: "33 sold",
+      itemPrice: "USD 869.00",
+    },
+    {
+      id: "7",
+      source: require("../assets/images/amazonecho.png"),
+      noItems: "13 sold",
+      itemPrice: "USD 160.00",
+    },
+    {
+      id: "8",
+      source: require("../assets/images/Pixel3.png"),
+      noItems: "4 sold",
+      itemPrice: "USD 1200.00",
+    },
+    {
+      id: "9",
+      source: require("../assets/images/xiaomia2lute.png"),
+      noItems: "3 sold",
+      itemPrice: "USD 100.00",
+    },
+    {
+      id: "10",
+      source: require("../assets/images/iphonexr.png"),
+      noItems: "7 sold",
+      itemPrice: "USD 680.00",
+    },
+    {
+      id: "11",
+      source: require("../assets/images/XIaomMiMix3.png"),
+      noItems: "7 sold",
+      itemPrice: "USD 160.00",
+    },
+  ];
+
   return (
     <View style={{ flex: 1 }}>
       <LinearGradient
@@ -130,36 +200,14 @@ const Home = () => {
               display: searching ? "none" : undefined,
             }}
           >
-            <HomeItems
-              source={require("../assets/images/mouse.png")}
-              noItems={"33 sold"}
-              itemPrice={"USD 108.00"}
-            />
-            <HomeItems
-              source={require("../assets/images/phone.png")}
-              noItems={"8 sold"}
-              itemPrice={"USD 360.00"}
-            />
-            <HomeItems
-              source={require("../assets/images/cardimage3.png")}
-              noItems={"6 sold"}
-              itemPrice={"USD 80.00"}
-            />
-            <HomeItems
-              source={require("../assets/images/smartwatch.png")}
-              noItems={"Only 2 left"}
-              itemPrice={"USD 260.00"}
-            />
-            <HomeItems
-              source={require("../assets/images/airpod.png")}
-              noItems={"15 sold"}
-              itemPrice={"USD 30.00"}
-            />
-            <HomeItems
-              source={require("../assets/images/phone2.png")}
-              noItems={"33 sold"}
-              itemPrice={"USD 869.00"}
-            />
+            {homeitems.map((item) => (
+              <HomeItems
+                key={item.id}
+                source={item.source}
+                noItems={item.noItems}
+                itemPrice={item.itemPrice}
+              />
+            ))}
           </View>
         </ScrollView>
         <Button

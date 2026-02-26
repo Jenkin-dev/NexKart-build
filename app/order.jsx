@@ -14,14 +14,207 @@ import { ScrollView } from "react-native";
 import OrderItems from "../components/OrderItems";
 
 const Orders = () => {
-  const [all, setAll] = useState(true);
-
-  const [paid, setPaid] = useState(false);
-  const [shipped, setShipped] = useState(false);
-  const [delivered, setDelivered] = useState(false);
-  const [returned, setReturned] = useState(false);
-
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const categories = ["All", "Paid", "Shipped", "Delivered", "Returned"];
   const { width } = Dimensions.get("screen");
+
+  const orders = [
+    {
+      id: "001",
+      status: "Paid",
+      items: [
+        {
+          source: require("../assets/images/XIaomMiMix3.png"),
+          name: "Xiaomi Mi Mix 3",
+          price: "USD 160",
+          color: "Black",
+          qty: "x 1",
+        },
+        {
+          source: require("../assets/images/mouse.png"),
+          name: "Logitech G703 Wireless Gaming Mouse",
+          price: "USD 100",
+          color: "Black",
+          qty: "x 1",
+        },
+      ],
+    },
+    {
+      id: "002",
+      status: "Shipped",
+      items: [
+        {
+          source: require("../assets/images/watchorder.png"),
+          name: "FitBit Versa",
+          price: "USD 280",
+          color: "Black",
+          qty: "x 1",
+        },
+      ],
+    },
+    {
+      id: "003",
+      status: "Paid",
+      items: [
+        {
+          source: require("../assets/images/Pixel3.png"),
+          name: "Pixel 3",
+          price: "USD 1200",
+          color: "Clearly White",
+          qty: "x 1",
+        },
+      ],
+    },
+
+    {
+      id: "004",
+      status: "Shipped",
+      items: [
+        {
+          source: require("../assets/images/xiaomia2lute.png"),
+          name: "Xiaomi A2 Lite",
+          price: "USD 100",
+          color: "Black",
+          qty: "x 1",
+        },
+      ],
+    },
+
+    {
+      id: "005",
+      status: "Delivered",
+      items: [
+        {
+          source: require("../assets/images/order2.png"),
+          name: "Google Home Mini",
+          price: "40",
+          color: "Charcoal",
+          qty: "x 1",
+        },
+        {
+          source: require("../assets/images/cardimage3.png"),
+          name: "Chrome Home Max",
+          price: "USD 80",
+          color: "Charcoal",
+          qty: "x 1",
+        },
+      ],
+    },
+
+    {
+      id: "006",
+      status: "Returned",
+      items: [
+        {
+          source: require("../assets/images/amazonecho.png"),
+          name: "Amazon Echo",
+          price: "USD 160",
+          color: "Slate Black",
+          qty: "x 1",
+        },
+        {
+          source: require("../assets/images/iphonexr.png"),
+          name: "iPhone XR",
+          price: "USD 680",
+          color: "Coral Blue",
+          qty: "x 1",
+        },
+      ],
+    },
+  ];
+
+  const filteredOrders =
+    selectedCategory === "All"
+      ? orders
+      : orders.filter((order) => order.status === selectedCategory);
+
+  const renderOrderButtons = (status) => {
+    switch (status) {
+      case "Paid":
+        return (
+          <>
+            <Button
+              style={styles.orderbutton}
+              bgcolor={"#bddcf6"}
+              textColor={"#4C69FF"}
+              text={"Order Details"}
+              fontfamily={"alexandriaLight"}
+            />
+            <Button
+              style={styles.orderbutton}
+              bgcolor={"#bddcf6"}
+              textColor={"#4C69FF"}
+              text={"Messages"}
+              fontfamily={"alexandriaLight"}
+            />
+          </>
+        );
+
+      case "Shipped":
+        return (
+          <>
+            <Button
+              style={styles.orderbutton}
+              bgcolor={"#bddcf6"}
+              textColor={"#4C69FF"}
+              text={"Order Details"}
+              fontfamily={"alexandriaLight"}
+            />
+            <Button
+              style={styles.orderbutton}
+              bgcolor={"#4C69FF"}
+              textColor={"#BDDCF6"}
+              text={"Track Package"}
+              fontfamily={"alexandriaLight"}
+            />
+          </>
+        );
+
+      case "Delivered":
+        return (
+          <>
+            <Button
+              style={styles.orderbutton}
+              bgcolor={"#bddcf6"}
+              textColor={"#4C69FF"}
+              text={"Order Details"}
+              fontfamily={"alexandriaLight"}
+            />
+            <Button
+              style={styles.orderbutton}
+              bgcolor={"#4C69FF"}
+              textColor={"#BDDCF6"}
+              text={"Leave Review"}
+              fontfamily={"alexandriaLight"}
+            />
+          </>
+        );
+
+      case "Returned":
+        return (
+          <>
+            <Button
+              style={styles.orderbutton}
+              bgcolor={"#bddcf6"}
+              textColor={"#4C69FF"}
+              text={"Contact Support"}
+              fontfamily={"alexandriaLight"}
+            />
+            <Button
+              style={styles.orderbutton}
+              bgcolor={"#4C69FF"}
+              textColor={"#BDDCF6"}
+              text={"Order Details"}
+              fontfamily={"alexandriaLight"}
+            />
+          </>
+        );
+
+      default:
+        return null;
+    }
+  };
+
   return (
     <SafeAreaView style={[styles.safeview, { width: width }]}>
       <View>
@@ -40,290 +233,51 @@ const Orders = () => {
         contentContainerStyle={styles.category}
         showsHorizontalScrollIndicator={false}
       >
-        <Button
-          onPress={() => setAll(!all)}
-          style={styles.categoryselector}
-          bgcolor={all ? "#4C69FF" : "#bddcf6"}
-          textColor={all ? "white" : "gray"}
-          text={"All"}
-          fontfamily={"alexandriaRegular"}
-        />
-        <Button
-          onPress={() => setPaid(!paid)}
-          style={styles.categoryselector}
-          bgcolor={paid ? "#4C69FF" : "#bddcf6"}
-          textColor={paid ? "white" : "gray"}
-          text={"Paid"}
-          fontfamily={"alexandriaRegular"}
-        />
-        <Button
-          onPress={() => setShipped(!shipped)}
-          style={styles.categoryselector}
-          bgcolor={shipped ? "#4C69FF" : "#bddcf6"}
-          textColor={shipped ? "white" : "gray"}
-          text={"Shipped"}
-          fontfamily={"alexandriaRegular"}
-        />
-        <Button
-          onPress={() => setDelivered(!delivered)}
-          style={styles.categoryselector}
-          bgcolor={delivered ? "#4C69FF" : "#bddcf6"}
-          textColor={delivered ? "white" : "gray"}
-          text={"Delivered"}
-          fontfamily={"alexandriaRegular"}
-        />
-        <Button
-          onPress={() => setReturned(!returned)}
-          style={styles.categoryselector}
-          bgcolor={returned ? "#FF4C96" : "#bddcf6"}
-          textColor={returned ? "white" : "gray"}
-          text={"Returned"}
-          fontfamily={"alexandriaRegular"}
-        />
+        {categories.map((item) => (
+          <Button
+            key={item}
+            onPress={() => setSelectedCategory(item)}
+            style={styles.categoryselector}
+            bgcolor={
+              selectedCategory === item
+                ? item === "Returned"
+                  ? "#FF4C96"
+                  : "#4C69FF"
+                : "#bddcf6"
+            }
+            textColor={selectedCategory === item ? "white" : "gray"}
+            text={item}
+            fontfamily={"alexandriaRegular"}
+          />
+        ))}
       </ScrollView>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.orders}>
-          <View
-            style={[
-              styles.orderitems,
-              { display: all || paid ? undefined : "none" },
-            ]}
-          >
-            <Text style={{ fontFamily: "alexandriaRegular", fontSize: 22 }}>
-              Order ID
-            </Text>
-            <OrderItems
-              source={require("../assets/images/XIaomMiMix3.png")}
-              itemname={"Xiaomi Mi Mix 3"}
-              itemprice={"USD 160"}
-              itemcolor={"Black"}
-              itemqty={"x 1"}
-              itemstatus={"Packing"}
-            />
-            <OrderItems
-              source={require("../assets/images/mouse.png")}
-              itemname={"Logitech G703 Wireless Gaming Mouse"}
-              itemprice={"USD 100"}
-              itemcolor={"Black"}
-              itemqty={"x 1"}
-              itemstatus={"Packing"}
-            />
+          {filteredOrders.map((order) => (
+            <View key={order.id} style={styles.orderitems}>
+              <Text style={{ fontFamily: "alexandriaRegular", fontSize: 22 }}>
+                Order ID: {order.id}
+              </Text>
 
-            <View style={styles.orderbuttons}>
-              <Button
-                style={styles.orderbutton}
-                bgcolor={"#bddcf6"}
-                textColor={"#4C69FF"}
-                text={"Order Details"}
-                fontfamily={"alexandriaLight"}
-              />
-              <Button
-                style={styles.orderbutton}
-                bgcolor={"#bddcf6"}
-                textColor={"#4C69FF"}
-                fontfamily={"alexandriaLight"}
-                text={"Messages"}
-              />
+              {order.items.map((item, index) => (
+                <OrderItems
+                  key={index}
+                  source={item.source}
+                  itemname={item.name}
+                  itemprice={item.price}
+                  itemcolor={item.color}
+                  itemqty={item.qty}
+                  itemstatus={order.status}
+                />
+              ))}
+
+              <View style={styles.orderbuttons}>
+                <View style={styles.orderbuttons}>
+                  {renderOrderButtons(order.status)}
+                </View>
+              </View>
             </View>
-          </View>
-
-          <View
-            style={[
-              styles.orderitems,
-              { display: all || paid ? undefined : "none" },
-            ]}
-          >
-            <Text style={{ fontFamily: "alexandriaRegular", fontSize: 22 }}>
-              Order ID
-            </Text>
-            <OrderItems
-              source={require("../assets/images/Pixel3.png")}
-              itemname={"Pixel 3"}
-              itemprice={"USD 1200"}
-              itemcolor={"Clearly White"}
-              itemqty={"x 1"}
-              itemstatus={"Packing"}
-            />
-
-            <View style={styles.orderbuttons}>
-              <Button
-                style={styles.orderbutton}
-                bgcolor={"#bddcf6"}
-                textColor={"#4C69FF"}
-                text={"Order Details"}
-                fontfamily={"alexandriaLight"}
-              />
-              <Button
-                style={styles.orderbutton}
-                bgcolor={"#bddcf6"}
-                textColor={"#4C69FF"}
-                fontfamily={"alexandriaLight"}
-                text={"Messages"}
-              />
-            </View>
-          </View>
-
-          <View
-            style={[
-              styles.orderitems,
-              { display: all || shipped ? undefined : "none" },
-            ]}
-          >
-            <Text style={{ fontFamily: "alexandriaRegular", fontSize: 22 }}>
-              Order ID
-            </Text>
-            <OrderItems
-              source={require("../assets/images/watchorder.png")}
-              itemname={"FitBit Versa"}
-              itemprice={"USD 280"}
-              itemcolor={"Black"}
-              itemqty={"x 1"}
-              itemstatus={"Shipped"}
-            />
-
-            <View style={styles.orderbuttons}>
-              <Button
-                style={styles.orderbutton}
-                bgcolor={"#bddcf6"}
-                textColor={"#4C69FF"}
-                text={"Order Details"}
-                fontfamily={"alexandriaLight"}
-              />
-              <Button
-                style={styles.orderbutton}
-                bgcolor={"#4C69FF"}
-                textColor={"#BDDCF6"}
-                fontfamily={"alexandriaLight"}
-                text={"Track Package"}
-              />
-            </View>
-          </View>
-
-          <View
-            style={[
-              styles.orderitems,
-              { display: all || shipped ? undefined : "none" },
-            ]}
-          >
-            <Text style={{ fontFamily: "alexandriaRegular", fontSize: 22 }}>
-              Order ID
-            </Text>
-            <OrderItems
-              source={require("../assets/images/xiaomia2lute.png")}
-              itemname={"Xiaomi A2 Lite"}
-              itemprice={"USD 100"}
-              itemcolor={"Black"}
-              itemqty={"x 1"}
-              itemstatus={"Shipped"}
-            />
-
-            <View style={styles.orderbuttons}>
-              <Button
-                style={styles.orderbutton}
-                bgcolor={"#bddcf6"}
-                textColor={"#4C69FF"}
-                text={"Order Details"}
-                fontfamily={"alexandriaLight"}
-              />
-              <Button
-                style={styles.orderbutton}
-                bgcolor={"#4C69FF"}
-                textColor={"#BDDCF6"}
-                fontfamily={"alexandriaLight"}
-                text={"Track Package"}
-              />
-            </View>
-          </View>
-
-          <View
-            style={[
-              styles.orderitems,
-              { display: all || delivered ? undefined : "none" },
-            ]}
-          >
-            <Text style={{ fontFamily: "alexandriaRegular", fontSize: 22 }}>
-              Order ID
-            </Text>
-            <OrderItems
-              source={require("../assets/images/order2.png")}
-              itemname={"Google Home Mini"}
-              itemprice={"USD 40"}
-              itemcolor={"Charcoal"}
-              itemqty={"x 1"}
-              itemstatus={"Delivered"}
-            />
-
-            <OrderItems
-              source={require("../assets/images/cardimage3.png")}
-              itemname={"Chrome Home Max"}
-              itemprice={"USD 80"}
-              itemcolor={"Charcoal"}
-              itemqty={"x 1"}
-              itemstatus={"Delivered"}
-            />
-
-            <View style={styles.orderbuttons}>
-              <Button
-                style={styles.orderbutton}
-                bgcolor={"#bddcf6"}
-                textColor={"#4C69FF"}
-                text={"Order Details"}
-                fontfamily={"alexandriaLight"}
-              />
-              <Button
-                style={styles.orderbutton}
-                bgcolor={"#4C69FF"}
-                textColor={"#BDDCF6"}
-                fontfamily={"alexandriaLight"}
-                text={"Leave Review"}
-              />
-            </View>
-          </View>
-
-          <View
-            style={[
-              styles.orderitems,
-              { display: all || returned ? undefined : "none" },
-            ]}
-          >
-            <Text style={{ fontFamily: "alexandriaRegular", fontSize: 22 }}>
-              Order ID
-            </Text>
-            <OrderItems
-              source={require("../assets/images/amazonecho.png")}
-              itemname={"Amazon Echo"}
-              itemprice={"USD 160"}
-              itemcolor={"Slate Black"}
-              itemqty={"x 1"}
-              itemstatus={"Returned"}
-            />
-
-            <OrderItems
-              source={require("../assets/images/iphonexr.png")}
-              itemname={"iPhone XR"}
-              itemprice={"USD 680"}
-              itemcolor={"Coral Blue"}
-              itemqty={"x 1"}
-              itemstatus={"Returned"}
-            />
-
-            <View style={styles.orderbuttons}>
-              <Button
-                style={styles.orderbutton}
-                bgcolor={"#bddcf6"}
-                textColor={"#4C69FF"}
-                text={"Contact Support"}
-                fontfamily={"alexandriaLight"}
-              />
-              <Button
-                style={styles.orderbutton}
-                bgcolor={"#4C69FF"}
-                textColor={"#BDDCF6"}
-                fontfamily={"alexandriaLight"}
-                text={"Order Details"}
-              />
-            </View>
-          </View>
+          ))}
         </View>
       </ScrollView>
     </SafeAreaView>

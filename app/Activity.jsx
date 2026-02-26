@@ -31,7 +31,7 @@ const Activity = () => {
         </View>
       </View>
       <Text style={styles.pageHead}>Activity</Text>
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
         <View style={styles.activity}>
           <Activities
             onPress={() => router.push("./wishlist")}
@@ -54,6 +54,7 @@ const Activity = () => {
           />
         </View>
         <Button
+          onPress={() => router.push("./order")}
           text={"View my orders"}
           fontfamily={"alexandriaLight"}
           bgcolor={"#bddcf6"}
