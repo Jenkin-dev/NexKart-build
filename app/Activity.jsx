@@ -44,8 +44,9 @@ const Activity = () => {
             activity={"Shipped"}
           />
           <Activities
+            onPress={() => router.push("./carts")}
             activityImage={require("../assets/images/intransit.png")}
-            activity={"Arriving"}
+            activity={"Carts"}
           />
           <Activities
             activityImage={require("../assets/images/warehouse.png")}

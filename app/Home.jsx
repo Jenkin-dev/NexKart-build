@@ -32,6 +32,7 @@ const Home = () => {
           display: searching ? undefined : "none",
           paddingHorizontal: 40,
           paddingTop: 50,
+          zIndex: 10,
         }}
       >
         <Input inputtype={"Search for a product"} />

@@ -4,7 +4,7 @@ import { Image, View } from "react-native";
 import Button from "./button";
 import { useState } from "react";
 
-const HomeItems = ({ source, wished, noItems, itemPrice }) => {
+const WishedItems = ({ source, noItems, itemPrice }) => {
   const [liked, setLiked] = useState(false);
   return (
     <TouchableOpacity
@@ -21,15 +21,7 @@ const HomeItems = ({ source, wished, noItems, itemPrice }) => {
     >
       <Image style={styles.image} source={source} resizeMode="none" />
       <Text style={styles.number}>{noItems}</Text>
-      <Button
-        onPress={() => setLiked(!liked)}
-        textColor={liked ? "white" : "#3DBECB"}
-        style={styles.button}
-        bgcolor={liked ? undefined : "white"}
-        text={wished ? wished : liked ? "Liked" : "Like"}
-        fontfamily={"alexandriaLight"}
-        fontsize={13}
-      />
+
       <Text style={styles.price}>{itemPrice}</Text>
     </TouchableOpacity>
   );
@@ -58,4 +50,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeItems;
+export default WishedItems;
