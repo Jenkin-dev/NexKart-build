@@ -1,33 +1,32 @@
-import create from "zustand";
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { persist } from "zustand/middleware";
 
-const useWishlistStore = create(
+export const useWishlistStore = create(
   persist(
     (set, get) => ({
-      likedItems: [],
+      wishlist: [],
 
-      toggleLike: (item) => {
-        const exists = get().likedItems.find((i) => i.id === item.id);
-        if (exists) {
-          set({
-            likedItems: get().likedItems.filter((i) => i.id !== item.id),
-          });
+      // Toggle like/unlike
+      toggleLike: (product) => {
+        const { wishlist } = get();
+        const isExist = wishlist.find((item) => item.id === product.id);
+
+        if (isExist) {
+          // Remove if already liked
+          set({ wishlist: wishlist.filter((item) => item.id !== product.id) });
         } else {
-          set({ likedItems: [...get().likedItems, item] });
+          // Add to wishlist
+          set({ wishlist: [...wishlist, product] });
         }
       },
 
-      isLiked: (id) => {
-        return !!get().likedItems.find((i) => i.id === id);
-      },
-
-      clearWishlist: () => set({ likedItems: [] }),
+      // Check if a specific item is liked
+      isLiked: (id) => get().wishlist.some((item) => item.id === id),
     }),
     {
-      name: "wishlist-storage",
+      name: "wishlist-storage", // unique name
+      storage: createJSONStorage(() => AsyncStorage),
     },
   ),
 );
-
-export default useWishlistStore;

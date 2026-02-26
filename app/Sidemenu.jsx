@@ -37,6 +37,9 @@ const Sidemenu = () => {
           <TouchableOpacity onPress={() => router.push("./order")}>
             <Text style={styles.text}>My Orders</Text>
           </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push("./wishlist")}>
+            <Text style={styles.text}>My Wishlist</Text>
+          </TouchableOpacity>
 
           <TouchableOpacity onPress={() => router.navigate("./(tabs)/Signup")}>
             <Text style={styles.text}>Logout</Text>

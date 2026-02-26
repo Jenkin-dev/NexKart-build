@@ -3,9 +3,19 @@ import { Text } from "react-native";
 import { Image, View } from "react-native";
 import Button from "./button";
 import { useState } from "react";
+import { useWishlistStore } from "../store/wishliststore";
 
-const HomeItems = ({ source, wished, noItems, itemPrice }) => {
+const HomeItems = ({ id, source, wished, noItems, itemPrice }) => {
   const [liked, setLiked] = useState(false);
+
+  const toggleLike = useWishlistStore((state) => state.toggleLike);
+  const isLiked = useWishlistStore((state) => state.isLiked(id));
+
+  const handlePress = () => {
+    // Pass the item details to the store
+    toggleLike({ id, source, noItems, itemPrice });
+  };
+
   return (
     <TouchableOpacity
       style={{
@@ -19,14 +29,15 @@ const HomeItems = ({ source, wished, noItems, itemPrice }) => {
         // backgroundColor: "#dcf6f5",
       }}
     >
-      <Image style={styles.image} source={source} resizeMode="none" />
+      <Image style={styles.image} source={source} resizeMode="contain" />
       <Text style={styles.number}>{noItems}</Text>
       <Button
-        onPress={() => setLiked(!liked)}
-        textColor={liked ? "white" : "#3DBECB"}
+        // onPress={() => setLiked(!liked)}
+        onPress={() => handlePress()}
+        textColor={isLiked ? "white" : "#3DBECB"}
         style={styles.button}
-        bgcolor={liked ? undefined : "white"}
-        text={wished ? wished : liked ? "Liked" : "Like"}
+        bgcolor={isLiked ? undefined : "white"}
+        text={isLiked ? "Liked" : "Like"}
         fontfamily={"alexandriaLight"}
         fontsize={13}
       />

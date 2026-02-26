@@ -1,19 +1,15 @@
-import { router } from "expo-router";
-import { ScrollView, StyleSheet } from "react-native";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { useWishlistStore } from "../store/wishliststore";
+import HomeItems from "../components/homeitem"; // Reuse your component!
+import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import WishedItems from "../components/wisheditems";
+import { router } from "expo-router";
 
 const Wishlist = () => {
+  const wishlist = useWishlistStore((state) => state.wishlist);
+
   return (
-    <SafeAreaView
-      style={{
-        paddingHorizontal: 20,
-        paddingVertical: 30,
-        flex: 1,
-        backgroundColor: "#bddcf6",
-      }}
-    >
+    <SafeAreaView style={styles.container}>
       <ScrollView>
         <View>
           <View style={styles.icons}>
@@ -26,19 +22,29 @@ const Wishlist = () => {
           </View>
           <Text style={styles.pageHead}>Wishlist</Text>
         </View>
-        <View>
-          <View style={styles.wish}>
-            <WishedItems />
-            <WishedItems />
-            <WishedItems />
-            <WishedItems />
-            <WishedItems />
-            <WishedItems />
-            <WishedItems />
-            <WishedItems />
-            <WishedItems />
-            <WishedItems />
-          </View>
+
+        <View style={styles.wish}>
+          {wishlist.length > 0 ? (
+            wishlist.map((item) => (
+              <HomeItems
+                key={item.id}
+                id={item.id}
+                source={item.source}
+                noItems={item.noItems}
+                itemPrice={item.itemPrice}
+              />
+            ))
+          ) : (
+            <Text
+              style={{
+                textAlign: "center",
+                marginTop: 50,
+                alignSelf: "center",
+              }}
+            >
+              Your wishlist is empty!
+            </Text>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -47,7 +53,12 @@ const Wishlist = () => {
 
 const styles = StyleSheet.create({
   pageHead: { fontFamily: "alexandriaBold", paddingBottom: 30, fontSize: 25 },
-
+  container: {
+    paddingHorizontal: 20,
+    paddingVertical: 30,
+    flex: 1,
+    backgroundColor: "#bddcf6",
+  },
   icons: {
     marginBottom: 20,
   },
