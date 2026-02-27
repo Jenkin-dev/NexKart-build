@@ -30,6 +30,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const { width } = Dimensions.get("screen");
   const { height } = Dimensions.get("screen");
+  const [loading, setLoading] = useState(false);
 
   const [storedUser, setStoredUser] = useState("");
   const [storedPassword, setStoredPassword] = useState("");
@@ -126,8 +127,8 @@ const Login = () => {
               <Text style={styles.text1}>Hello again,</Text>
               <Text style={styles.text2}>{zusUsername}</Text>
 
-              <TouchableOpacity onPress={() => router.push("/Signup")}>
-                <Text style={styles.text3}>This isn’t me</Text>
+              <TouchableOpacity onPress={() => router.push("/existinguser")}>
+                <Text style={styles.text3}>This isn’t you? Sign in</Text>
               </TouchableOpacity>
             </View>
             <View>
@@ -151,14 +152,16 @@ const Login = () => {
               </Text>
             ) : undefined}
             <Button
-              text="Login"
+              text={loading ? "Logging in..." : "Login"}
+              disabled={loading}
               textColor={"white"}
               style={{
-                backgroundColor: "#3DBECB",
+                backgroundColor: loading ? "#A0A0A0" : "#3DBECB",
                 marginVertical: 15,
               }}
               onPress={async () => {
                 if (password.length >= 6) {
+                  setLoading(true);
                   try {
                     // Convert the username (e.g., "Jenkins") to a fake email "jenkins@nexkart.com"
                     // .trim() and .toLowerCase() ensure consistency
@@ -181,6 +184,8 @@ const Login = () => {
                       "Login Failed",
                       "The username or password you entered is incorrect. Please try again.",
                     );
+                  } finally {
+                    setLoading(false);
                   }
                 } else {
                   Alert.alert(

@@ -4,12 +4,13 @@ import {
   Text,
   TouchableOpacity,
   View,
+  StyleSheet,
+  Image,
 } from "react-native";
-// import SafeView from "../components/safe-view";
-import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Image } from "react-native";
 import { router } from "expo-router";
+import { signOut } from "firebase/auth";
+import { auth } from "../services/firebase";
 
 const Sidemenu = () => {
   return (
@@ -41,7 +42,7 @@ const Sidemenu = () => {
             <Text style={styles.text}>My Wishlist</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => router.navigate("./(tabs)/Signup")}>
+          <TouchableOpacity onPress={() => signOut(auth)}>
             <Text style={styles.text}>Logout</Text>
           </TouchableOpacity>
         </View>
