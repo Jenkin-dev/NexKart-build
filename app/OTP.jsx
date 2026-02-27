@@ -17,9 +17,12 @@ import {
   getAuth,
   PhoneAuthProvider,
   signInWithCredential,
+  createUserWithEmailAndPassword,
 } from "firebase/auth";
 import { auth } from "../services/firebase";
 import { useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SecureStore from "expo-secure-store";
 
 const OTP = () => {
   const { width } = Dimensions.get("screen");
@@ -29,16 +32,24 @@ const OTP = () => {
 
   const handleVerifyCode = async (code) => {
     try {
-      // 2. Create the credential using the verificationId and the code entered by the user
+      // A. Verify the Phone Number first
       const credential = PhoneAuthProvider.credential(verificationId, code);
-
-      // 3. Sign in to Firebase
       await signInWithCredential(auth, credential);
 
-      Alert.alert("Success", "Phone authenticated!");
-      router.push("./(tabs)/Login");
+      // B. Retrieve the username and password we saved during Signup
+      const savedUsername = await AsyncStorage.getItem("User");
+      const savedPassword = await SecureStore.getItemAsync("Userpassword");
+
+      // C. Create the Firebase Email/Password account using the trick
+      const internalEmail = `${savedUsername.trim().toLowerCase()}@nexkart.com`;
+
+      await createUserWithEmailAndPassword(auth, internalEmail, savedPassword);
+
+      Alert.alert("Success", "Account created successfully!");
+      router.push("/Home"); // Redirect to Home
     } catch (err) {
-      Alert.alert("Error", "Invalid code. Please try again.");
+      console.error(err);
+      Alert.alert("Error", err.message);
     }
   };
 

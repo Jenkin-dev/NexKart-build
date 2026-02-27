@@ -22,6 +22,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
 import { useUsername } from "../../store/useUsername";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../services/firebase";
 
 const Login = () => {
   const { zusUsername, setZusUsername } = useUsername();
@@ -155,15 +157,31 @@ const Login = () => {
                 backgroundColor: "#3DBECB",
                 marginVertical: 15,
               }}
-              onPress={() => {
-                if (password.length >= 6 && password === storedPassword) {
-                  router.push("../Terms");
-                  console.log("The password is:", password);
-                } else if (password !== storedPassword) {
-                  Alert.alert(
-                    "Incorrect Password",
-                    "Check the password and try again ",
-                  );
+              onPress={async () => {
+                if (password.length >= 6) {
+                  try {
+                    // Convert the username (e.g., "Jenkins") to a fake email "jenkins@nexkart.com"
+                    // .trim() and .toLowerCase() ensure consistency
+                    const internalEmail = `${zusUsername.trim().toLowerCase()}@nexkart.com`;
+
+                    console.log("Attempting login for:", internalEmail);
+
+                    // This tells Firebase to sign in
+                    await signInWithEmailAndPassword(
+                      auth,
+                      internalEmail,
+                      password,
+                    );
+
+                    // Note: You don't need router.push here because your _layout.jsx
+                    // will automatically detect the 'user' and move you to /Home.
+                  } catch (error) {
+                    console.error(error);
+                    Alert.alert(
+                      "Login Failed",
+                      "The username or password you entered is incorrect. Please try again.",
+                    );
+                  }
                 } else {
                   Alert.alert(
                     "Invalid Password",

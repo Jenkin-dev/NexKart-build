@@ -1,5 +1,9 @@
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { useEffect, useState } from "react";
+import { Stack, useRouter, useSegments } from "expo-router";
+import { auth } from "../services/firebase";
+import { onAuthStateChanged } from "firebase/auth";
+import { View, ActivityIndicator } from "react-native";
 
 const RootLayout = () => {
   const [loaded, error] = useFonts({
@@ -22,25 +26,56 @@ const RootLayout = () => {
     return null;
   }
 
+  const [initializing, setInitializing] = useState(true);
+  const [user, setUser] = useState(null);
+  const router = useRouter();
+  const segments = useSegments();
+
+  // Listen for auth state changes
+  useEffect(() => {
+    const subscriber = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      if (initializing) setInitializing(false);
+    });
+    return subscriber; // unsubscribe on unmount
+  }, [initializing]);
+
+  // Handle redirection logic
+  useEffect(() => {
+    if (initializing) return;
+
+    // 1. Define which screens are "Auth" screens (where users go when NOT logged in)
+    const isAuthScreen =
+      segments[0] === "Login" ||
+      segments[0] === "Signup" ||
+      segments[0] === "Mobile" ||
+      segments[0] === "OTP" ||
+      segments[0] === "(tabs)"; // Assuming Login/Signup are inside (tabs)
+
+    if (!user && !isAuthScreen) {
+      // If no user and trying to go to Home/Profile, force Login
+      // router.replace("/(tabs)/Login");
+    } else if (user && isAuthScreen) {
+      // If user IS logged in and trying to access Login/Signup, force Home
+      router.replace("/Terms");
+    }
+  }, [user, segments, initializing]);
+  if (initializing) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#4C69FF" />
+      </View>
+    );
+  }
+
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      {/* Auth & Onboarding Flow */}
       <Stack.Screen name="index" />
-      <Stack.Screen name="Onboarding1" />
-      <Stack.Screen name="Onboarding2" />
-      <Stack.Screen name="(tabs)" />
-
-      {/* Verification & Legal */}
       <Stack.Screen name="Mobile" />
       <Stack.Screen name="OTP" />
-      <Stack.Screen name="Terms" />
-
-      {/* Main App Screens */}
       <Stack.Screen name="Home" />
-      <Stack.Screen name="Sidemenu" />
-      <Stack.Screen name="Account" />
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
     </Stack>
   );
 };
-
 export default RootLayout;
