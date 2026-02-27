@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "104300309502",
+    "project_id": "nexkart-project",
+    "storage_bucket": "nexkart-project.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:104300309502:android:8d4b998d1dab3c7b016eaf",
+        "android_client_info": {
+          "package_name": "com.nexkart"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwqAbqF0jowBSx5na53bm9BHtzrkFaVu4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
