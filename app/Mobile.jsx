@@ -12,27 +12,43 @@ import { useState } from "react";
 import Button from "../components/button";
 import { router, useLocalSearchParams } from "expo-router";
 import * as SecureStore from "expo-secure-store";
+import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
+import { auth } from "../services/firebase";
+import { useRef } from "react";
+import { PhoneAuthProvider } from "firebase/auth";
 // import { useSignupStore } from "../store/useSignupStore";
 
 const Mobile = () => {
   const [country, setCountry] = useState("Nigeria");
   const [phoneNumber, setPhoneNumber] = useState("+234");
-  // const setPhone = useSignupStore((s) => s.setPhone);
-  // const { userpassword } = useLocalSearchParams();
-  // const UserPassword = userpassword;
-  // console.log(userpassword, UserPassword);
-  // console.log(typeof phoneNumber, phoneNumber);
-
-  const storePhone = async (phone) => {
+  const recaptchaVerifier = useRef();
+  const handleSendCode = async () => {
     try {
-      await SecureStore.setItemAsync("PhoneNumber", phone);
-    } catch (e) {
-      console.log("an error occured", e);
+      const phoneProvider = new PhoneAuthProvider(auth);
+      const verificationId = await phoneProvider.verifyPhoneNumber(
+        phoneNumber,
+        recaptchaVerifier.current,
+      );
+
+      // Store the phone number locally
+      await SecureStore.setItemAsync("PhoneNumber", phoneNumber);
+
+      // Navigate to OTP and pass the verificationId
+      router.push({
+        pathname: "./OTP",
+        params: { verificationId, phoneNumber },
+      });
+    } catch (err) {
+      Alert.alert("Error", err.message);
     }
   };
 
   return (
     <SafeView style={{ paddingHorizontal: 20 }}>
+      <FirebaseRecaptchaVerifierModal
+        ref={recaptchaVerifier}
+        firebaseConfig={auth.app.options}
+      />
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={"height"}>
         <View style={{ flex: 1 }}>
           <Logohead pageDescription={"Add Mobile number"} />
@@ -53,21 +69,7 @@ const Mobile = () => {
           </ScrollView>
         </View>
         <Button
-          onPress={() => {
-            if (!phoneNumber) {
-              Alert.alert(
-                "Input phone number",
-                "Make sure you typed in a valid phone number",
-              );
-            } else {
-              // setPhone(phoneNumber);
-              storePhone(phoneNumber);
-              router.push({
-                pathname: "./OTP",
-                // params: { number: phoneNumber },
-              });
-            }
-          }}
+          onPress={handleSendCode} // 4. Link the new function
           style={{ backgroundColor: "white", marginBottom: 2 }}
           text={"Next"}
           textColor={"#4C69FF"}

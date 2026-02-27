@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Text,
   View,
+  Alert,
 } from "react-native";
 import Logohead from "../components/logohead";
 import SafeView from "../components/safe-view";
@@ -12,21 +13,35 @@ import Input from "../components/input";
 import Button from "../components/button";
 import { router, useLocalSearchParams } from "expo-router";
 import { OtpInput } from "react-native-otp-entry";
-// import { useSignupStore } from "../store/useSignupStore";
+import {
+  getAuth,
+  PhoneAuthProvider,
+  signInWithCredential,
+} from "firebase/auth";
+import { auth } from "../services/firebase";
 import { useState } from "react";
 
 const OTP = () => {
   const { width } = Dimensions.get("screen");
   const [filled, setFilled] = useState(false);
   const [otInput, setOtInput] = useState("");
-  //   const { phone } = useLocalSearchParams();
-  //   const { userpassword } = useLocalSearchParams();
-  //   console.log(userpassword, "is the user's password");
-  //   const phoneNumber = Number(phone);
+  const { verificationId, phoneNumber } = useLocalSearchParams();
 
-  // const phone = useSignupStore((s) => s.phone);
+  const handleVerifyCode = async (code) => {
+    try {
+      // 2. Create the credential using the verificationId and the code entered by the user
+      const credential = PhoneAuthProvider.credential(verificationId, code);
 
-  //   console.log(phoneNumber, typeof phoneNumber);
+      // 3. Sign in to Firebase
+      await signInWithCredential(auth, credential);
+
+      Alert.alert("Success", "Phone authenticated!");
+      router.push("./(tabs)/Login");
+    } catch (err) {
+      Alert.alert("Error", "Invalid code. Please try again.");
+    }
+  };
+
   return (
     <SafeView style={{ paddingHorizontal: 20 }}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={"height"}>
@@ -51,11 +66,10 @@ const OTP = () => {
                 console.log("the current input is", text);
               }}
               focusStickBlinkingDuration={1000}
-              onFilled={() => {
-                console.log("OTP entered");
+              onFilled={(code) => {
+                setOtInput(code);
                 setFilled(true);
-
-                router.push("./(tabs)/Login");
+                handleVerifyCode(code); // Auto-verify when all digits are entered
               }}
               theme={{
                 pinCodeContainerStyle: styles.pinbox,
