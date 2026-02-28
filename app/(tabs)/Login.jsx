@@ -90,6 +90,8 @@ const Login = () => {
         if (userName) {
           setZusUsername(userName);
           setStoredUser(userName);
+        } else {
+          setZusUsername("Undefined");
         }
         console.log("Retrieved username", userName);
         console.log("zustand username", storedUser);
@@ -180,10 +182,7 @@ const Login = () => {
                     // will automatically detect the 'user' and move you to /Home.
                   } catch (error) {
                     console.error(error);
-                    Alert.alert(
-                      "Login Failed",
-                      "The username or password you entered is incorrect. Please try again.",
-                    );
+                    Alert.alert("Login Failed", error.message);
                   } finally {
                     setLoading(false);
                   }

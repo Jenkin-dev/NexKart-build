@@ -9,10 +9,33 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
-import { signOut } from "firebase/auth";
+import { getAuth, signOut } from "firebase/auth";
 import { auth } from "../services/firebase";
+import { useEffect, useState } from "react";
+import { doc, getDoc, getFirestore } from "firebase/firestore";
 
 const Sidemenu = () => {
+  const [username, setUsername] = useState("Undefined");
+
+  useEffect(() => {
+    const fetchusername = async () => {
+      const auth = getAuth();
+      const db = getFirestore();
+      const user = auth.currentUser;
+
+      if (user) {
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          setUsername(docSnap.data().username);
+        } else {
+          setUsername("Null");
+        }
+      }
+    };
+    fetchusername();
+  }, []);
   return (
     <ImageBackground
       style={styles.container}
@@ -26,6 +49,9 @@ const Sidemenu = () => {
           />
         </TouchableOpacity>
         <View>
+          <Text style={styles.welcomeText}>
+            WELCOME {username.toUpperCase()}
+          </Text>
           <TouchableOpacity onPress={() => router.push("/Home")}>
             <Text style={styles.text}>Home</Text>
           </TouchableOpacity>
@@ -60,6 +86,11 @@ const styles = StyleSheet.create({
     fontFamily: "alexandriaLight",
     fontSize: 30,
     marginVertical: 20,
+  },
+  welcomeText: {
+    color: "whitesmoke",
+    fontFamily: "alexandriaBold",
+    fontSize: 27,
   },
 });
 

@@ -15,29 +15,42 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
 import { useUsername } from "../store/useUsername";
 import { useEffect } from "react";
+import { getAuth } from "firebase/auth";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
 import * as SecureStore from "expo-secure-store";
 
 const Account = () => {
   const { zusUsername } = useUsername();
   // const phone = useSignupStore((s) => s.phone);
-  const [phone, setPhone] = useState();
-  const [storedUser, setStoredUser] = useState("");
+  // const [phone, setPhone] = useState();
+  // const [storedUser, setStoredUser] = useState("");
+  const [username, setUsername] = useState("Loading...");
+  const [userphone, setUserphone] = useState("+234...");
 
   useEffect(() => {
-    const getPhone = async () => {
-      try {
-        const phone = await SecureStore.getItemAsync("PhoneNumber");
-        if (phone) {
-          setPhone(phone);
-          console.log("the phone number is:", phone);
+    const fetchUserData = async () => {
+      const auth = getAuth();
+      const db = getFirestore();
+      const user = auth.currentUser;
+
+      if (user) {
+        // 1. Reference the specific document using the User's UID
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          // 2. Set the 'username' field from your Firestore data to state
+          setUsername(docSnap.data().username);
+          setUserphone(docSnap.data().phoneNumber);
+        } else {
+          setUsername("No username found");
         }
-      } catch (e) {
-        console.log("An error occcured", e);
       }
     };
 
-    getPhone();
+    fetchUserData();
   }, []);
+
   return (
     // <SafeView style={{ paddingHorizontal: 20, marginTop: 20 }}>
 
@@ -72,8 +85,8 @@ const Account = () => {
             />
           </View>
           <View>
-            <Text style={styles.username}>{zusUsername}</Text>
-            <Text style={styles.phone}>{phone}</Text>
+            <Text style={styles.username}>{username.toUpperCase()}</Text>
+            <Text style={styles.phone}>{userphone}</Text>
             <TouchableOpacity style={styles.profileButton}>
               <Text style={styles.profile}>View Profile</Text>
             </TouchableOpacity>
