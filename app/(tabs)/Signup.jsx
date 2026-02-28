@@ -29,14 +29,25 @@ const Signup = () => {
   const { width } = Dimensions.get("screen");
   const { height } = Dimensions.get("screen");
   const passwordLength = password.length;
-  const { zusUsername } = useUsername();
+  // const { zusUsername } = useUsername();
   const [loading, setLoading] = useState(false);
 
-  const [username, setUsername] = useState(zusUsername);
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
 
   const storeUser = async (userName) => {
     try {
       await AsyncStorage.setItem("User", userName);
+      console.log("the username is:", userName);
+    } catch (e) {
+      console.log("An error occured fetching last used Username", e);
+    }
+  };
+
+  const storeUserEmail = async (userEmail) => {
+    try {
+      await AsyncStorage.setItem("UserEmail", userEmail);
+      console.log("The user's email adress is:", userEmail);
     } catch (e) {
       console.log("An error occured fetching last used Username", e);
     }
@@ -69,14 +80,19 @@ const Signup = () => {
   return (
     <SafeView>
       <TopTab style={{ position: "relative", top: 0.025 * height }} />
-      <KeyboardAvoidingView style={{}} behavior={"height"}>
-        <ScrollView>
-          <View style={{ marginHorizontal: 30 }}>
+      <KeyboardAvoidingView style={{}} behavior={"padding"}>
+        <ScrollView style={{}}>
+          <View style={{ marginHorizontal: 30, maxHeight: 0.5 * height }}>
             <Text style={styles.head}>Manual Sign Up</Text>
             <Input
-              style={{ marginVertical: 15 }}
+              style={{ marginVertical: 9 }}
+              inputtype={"Email Address"}
+              onChangeText={setEmail}
+              keyboardType={"email-address"}
+            />
+            <Input
+              style={{ marginVertical: 9 }}
               inputtype={"Username"}
-              value={username}
               onChangeText={setUsername}
             />
             <Passwordinput
@@ -92,10 +108,6 @@ const Signup = () => {
                 onChangeText={setCpassword}
               />
             ) : undefined}
-
-            <View style={{ paddingVertical: 10 }}></View>
-
-            <View style={styles.line} />
           </View>
         </ScrollView>
 
@@ -118,6 +130,14 @@ const Signup = () => {
               return;
             }
 
+            if ((email && username) === "") {
+              Alert.alert(
+                "Invalid Username/Email",
+                "Make sure to fill out the form",
+              );
+              return;
+            }
+
             if (password !== cpassword) {
               Alert.alert(
                 "Unable to proceed",
@@ -130,6 +150,7 @@ const Signup = () => {
               setLoading(true);
 
               await storeUser(username);
+              await storeUserEmail(email);
               await storePassword(password);
 
               console.log("The username is:", username);
