@@ -50,10 +50,9 @@ const RootLayout = () => {
       segments[0] === "Signup" ||
       segments[0] === "ExistingUser" ||
       segments[0] === "Mobile" ||
-      segments[0] === "OTP" ||
       segments[0] === "(tabs)"; // Assuming Login/Signup are inside (tabs)
 
-    if (!user && !isAuthScreen) {
+    if (!user && !isAuthScreen && segments[0] !== "OTP") {
       // If no user and trying to go to Home/Profile, force Login
       router.replace("/(tabs)/Login");
     } else if (user && isAuthScreen) {

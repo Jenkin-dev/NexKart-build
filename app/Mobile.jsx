@@ -16,22 +16,26 @@ import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import { auth } from "../services/firebase";
 import { useRef } from "react";
 import { PhoneAuthProvider } from "firebase/auth";
-// import { useSignupStore } from "../store/useSignupStore";
 
 const Mobile = () => {
   const [country, setCountry] = useState("Nigeria");
   const [phoneNumber, setPhoneNumber] = useState("+234");
+  const [loading, setLoading] = useState(false);
   const recaptchaVerifier = useRef();
   const handleSendCode = async () => {
     try {
+      setLoading(true);
       const phoneProvider = new PhoneAuthProvider(auth);
       const verificationId = await phoneProvider.verifyPhoneNumber(
         phoneNumber,
         recaptchaVerifier.current,
+        console.log(
+          `Phone Provider: ${phoneProvider}, Verification ID: ${verificationId}`,
+        ),
       );
 
       // Store the phone number locally
-      await SecureStore.setItemAsync("PhoneNumber", phoneNumber);
+      // await SecureStore.setItemAsync("PhoneNumber", phoneNumber);
 
       // Navigate to OTP and pass the verificationId
       router.push({
@@ -39,7 +43,9 @@ const Mobile = () => {
         params: { verificationId, phoneNumber },
       });
     } catch (err) {
-      Alert.alert("Error", err.message);
+      Alert.alert("Error from sending code", err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -71,8 +77,8 @@ const Mobile = () => {
         <Button
           onPress={handleSendCode} // 4. Link the new function
           style={{ backgroundColor: "white", marginBottom: 2 }}
-          text={"Next"}
-          textColor={"#4C69FF"}
+          text={loading ? "Checking Number" : "Next"}
+          textColor={loading ? "grey" : "#4C69FF"}
         />
       </KeyboardAvoidingView>
     </SafeView>

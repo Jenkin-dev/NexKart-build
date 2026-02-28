@@ -18,20 +18,19 @@ import Passwordinput from "../../components/passwordInput";
 import Button from "../../components/button";
 import { useState } from "react";
 import Socialmedia from "../../components/socialmedia";
-// import { useSignupStore } from "../../store/useSignupStore";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
 import { useUsername } from "../../store/useUsername";
 
 const Signup = () => {
-  // const setUser = useSignupStore((s) => s.setUser);
-
   const [password, setPassword] = useState("");
   const [cpassword, setCpassword] = useState("");
   const { width } = Dimensions.get("screen");
   const { height } = Dimensions.get("screen");
   const passwordLength = password.length;
   const { zusUsername } = useUsername();
+  const [loading, setLoading] = useState(false);
 
   const [username, setUsername] = useState(zusUsername);
 
@@ -39,21 +38,19 @@ const Signup = () => {
     try {
       await AsyncStorage.setItem("User", userName);
     } catch (e) {
-      console.log("An error occured", e);
+      console.log("An error occured fetching last used Username", e);
     }
   };
 
   const storePassword = async (passWord) => {
     try {
-      console.log("The selected password is", passWord);
+      console.log("The last used password is", passWord);
       await SecureStore.setItemAsync("Userpassword", passWord);
     } catch (e) {
-      console.log("An error occured", e);
+      console.log("An error occured trying to fetch last used Password", e);
     }
   };
 
-  // console.log(useSignupStore);
-  // console.log(password.length);
   const styles = StyleSheet.create({
     head: {
       fontSize: 24,
@@ -103,31 +100,46 @@ const Signup = () => {
         </ScrollView>
 
         <Button
-          style={{ backgroundColor: "#3DBECB" }}
-          text="Sign Up"
+          style={{ backgroundColor: loading ? "grey" : "#3DBECB" }}
+          text={loading ? "Signing up" : "Sign Up"}
           textColor={"white"}
           fontfamily="alexandriaSemibold"
-          onPress={() => {
-            if (password === cpassword && password !== "") {
-              // setUser(username, password);
-              storeUser(username);
-              storePassword(password);
-              router.push("../Mobile");
-              console.log("The username is:", username);
-              console.log("The password inputed is:", password);
-              console.log("The confirmation password is:", cpassword);
-            } else if (password === "") {
+          onPress={async () => {
+            if (password === "") {
               Alert.alert("Invalid request", "Please input password");
-            } else if (passwordLength < 6) {
+              return;
+            }
+
+            if (passwordLength < 6) {
               Alert.alert(
                 "Invalid Password",
                 "A minimum of 6 characters required",
               );
-            } else {
+              return;
+            }
+
+            if (password !== cpassword) {
               Alert.alert(
                 "Unable to proceed",
-                "make sure you properly confirm password",
+                "Make sure you properly confirm password",
               );
+              return;
+            }
+
+            try {
+              setLoading(true);
+
+              await storeUser(username);
+              await storePassword(password);
+
+              console.log("The username is:", username);
+
+              router.push("../Mobile");
+            } catch (error) {
+              console.log("Signup error:", error);
+              Alert.alert("Error", "Something went wrong");
+            } finally {
+              setLoading(false); // ✅ ALWAYS resets loading
             }
           }}
         />

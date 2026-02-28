@@ -18,11 +18,24 @@ import {
   PhoneAuthProvider,
   signInWithCredential,
   createUserWithEmailAndPassword,
+  linkWithCredential,
+  signInWithEmailAndPassword,
 } from "firebase/auth";
+import { EmailAuthProvider } from "firebase/auth";
 import { auth } from "../services/firebase";
 import { useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
+import {
+  doc,
+  setDoc,
+  getDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
+import { db } from "../services/firebase";
 
 const OTP = () => {
   const { width } = Dimensions.get("screen");
@@ -32,27 +45,72 @@ const OTP = () => {
 
   const handleVerifyCode = async (code) => {
     try {
-      // A. Verify the Phone Number first
-      const credential = PhoneAuthProvider.credential(verificationId, code);
-      await signInWithCredential(auth, credential);
+      const phoneCredential = PhoneAuthProvider.credential(
+        verificationId,
+        code,
+      );
 
-      // B. Retrieve the username and password we saved during Signup
+      const phoneUserCredential = await signInWithCredential(
+        auth,
+        phoneCredential,
+      );
+
+      const user = phoneUserCredential.user;
+
       const savedUsername = await AsyncStorage.getItem("User");
       const savedPassword = await SecureStore.getItemAsync("Userpassword");
 
-      // C. Create the Firebase Email/Password account using the trick
+      // 1️⃣ Check if phone already has account
+      const userDocRef = doc(db, "users", user.uid);
+      const existingUserDoc = await getDoc(userDocRef);
+
+      if (existingUserDoc.exists()) {
+        Alert.alert(
+          "Unsuccessful Signup",
+          "Account already exists for this phone number.",
+        );
+        return;
+      }
+
+      // 2️⃣ Check if username is taken
+      const usernameQuery = query(
+        collection(db, "users"),
+        where("username", "==", savedUsername.toLowerCase()),
+      );
+
+      const usernameSnapshot = await getDocs(usernameQuery);
+
+      if (!usernameSnapshot.empty) {
+        Alert.alert("Username already taken.");
+        return;
+      }
+
+      // 3️⃣ Link email
       const internalEmail = `${savedUsername.trim().toLowerCase()}@nexkart.com`;
 
-      await createUserWithEmailAndPassword(auth, internalEmail, savedPassword);
+      const emailCredential = EmailAuthProvider.credential(
+        internalEmail,
+        savedPassword,
+      );
+
+      await linkWithCredential(user, emailCredential);
+
+      // 4️⃣ Save profile
+      await setDoc(userDocRef, {
+        username: savedUsername.toLowerCase(),
+        phoneNumber: phoneNumber,
+        createdAt: new Date().toISOString(),
+      });
 
       Alert.alert("Success", "Account created successfully!");
-      router.push("/Home"); // Redirect to Home
+      router.push("/Home");
     } catch (err) {
       console.error(err);
       Alert.alert("Error", err.message);
+    } finally {
+      setFilled(false);
     }
   };
-
   return (
     <SafeView style={{ paddingHorizontal: 20 }}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={"height"}>
@@ -66,8 +124,10 @@ const OTP = () => {
                 fontSize: 19,
               }}
             >
-              Enter the 4 digit PIN that we sent to:
-              <Text style={{ fontFamily: "alexandriaRegular" }}>{}</Text>
+              Enter the 6 digit PIN that we sent to:
+              <Text style={{ fontFamily: "alexandriaRegular" }}>
+                {phoneNumber}
+              </Text>
             </Text>
 
             <OtpInput
@@ -91,22 +151,13 @@ const OTP = () => {
                 focusedPinCodeContainerStyle: styles.focusedPinBox,
               }}
             />
-
-            <Text>
-              Are sure this is your phone number? <Text>{}</Text>
-            </Text>
           </ScrollView>
         </View>
         <Button
-          text={"Verify"}
+          text={!filled ? "Verify" : "Verifying"}
           style={{ backgroundColor: filled ? "#3DBECB" : "white" }}
           textColor={filled ? "white" : "grey"}
           disabled={!filled}
-          onPress={() => {
-            if (filled) {
-              router.push("./(tabs)/Login");
-            }
-          }}
         />
       </KeyboardAvoidingView>
     </SafeView>
