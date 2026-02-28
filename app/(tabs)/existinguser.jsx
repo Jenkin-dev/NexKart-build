@@ -13,34 +13,43 @@ import { useState } from "react";
 import Button from "../../components/button";
 import SafeView from "../../components/safe-view";
 import TopTab from "../../components/toptab";
-import Input from "../../components/input"; // Re-using your input component
+import Input from "../../components/input";
 import Passwordinput from "../../components/passwordInput";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../services/firebase";
+import { auth, db } from "../../services/firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 const ExistingUser = () => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { width, height } = Dimensions.get("screen");
 
   const handleLogin = async () => {
-    if (!username || password.length < 6) {
+    if (!email || password.length < 6) {
       Alert.alert(
         "Invalid input",
-        "Please enter your username and a valid password.",
+        "Please enter your email address and a valid password.",
       );
       return;
     }
 
     setLoading(true);
     try {
-      const internalEmail = `${username.trim().toLowerCase()}@nexkart.com`;
-      await signInWithEmailAndPassword(auth, internalEmail, password);
+      const emailAddress = email.trim().toLowerCase();
+      await signInWithEmailAndPassword(auth, emailAddress, password);
 
-      // Update AsyncStorage so next time the "Login" screen greets this new user
-      await AsyncStorage.setItem("User", username);
+      if (auth.currentUser) {
+        const userDocRef = doc(db, "users", auth.currentUser.uid);
+        const userDoc = await getDoc(userDocRef);
+
+        if (userDoc.exists()) {
+          const fetchedUsername = userDoc.data().username;
+          await AsyncStorage.setItem("savedUsername", fetchedUsername);
+        }
+      }
+      await AsyncStorage.setItem("savedEmail", emailAddress);
     } catch (error) {
       Alert.alert(
         "Login Failed",
@@ -72,9 +81,9 @@ const ExistingUser = () => {
 
           <View style={{ marginTop: 40 }}>
             <Input
-              inputtype={"Username"}
-              value={username}
-              onChangeText={setUsername}
+              inputtype={"Email Address"}
+              value={email}
+              onChangeText={setEmail}
               style={{ marginBottom: 20 }}
             />
 

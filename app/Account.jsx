@@ -18,6 +18,7 @@ import { useEffect } from "react";
 import { getAuth } from "firebase/auth";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import * as SecureStore from "expo-secure-store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Account = () => {
   const { zusUsername } = useUsername();
@@ -26,12 +27,14 @@ const Account = () => {
   // const [storedUser, setStoredUser] = useState("");
   const [username, setUsername] = useState("Loading...");
   const [userphone, setUserphone] = useState("+234...");
+  const [useremail, setUseremail] = useState("email.domain.com");
 
   useEffect(() => {
     const fetchUserData = async () => {
       const auth = getAuth();
       const db = getFirestore();
       const user = auth.currentUser;
+      setUseremail(user?.email);
 
       if (user) {
         // 1. Reference the specific document using the User's UID
@@ -87,6 +90,7 @@ const Account = () => {
           <View>
             <Text style={styles.username}>{username.toUpperCase()}</Text>
             <Text style={styles.phone}>{userphone}</Text>
+            <Text style={styles.phone}>{useremail}</Text>
             <TouchableOpacity style={styles.profileButton}>
               <Text style={styles.profile}>View Profile</Text>
             </TouchableOpacity>
@@ -116,14 +120,19 @@ const styles = StyleSheet.create({
   },
   details: { flexDirection: "row", gap: 20 },
   pageHead: { fontFamily: "alexandriaBold", paddingBottom: 30, fontSize: 25 },
-  phone: { fontFamily: "alexandriaLight", fontSize: 15, marginBottom: 20 },
+  phone: { fontFamily: "alexandriaLight", fontSize: 15, marginVertical: 2 },
   safeview: {
     paddingHorizontal: 20,
     paddingVertica: 20,
     backgroundColor: "#bddcf6",
     flex: 1,
   },
-  profileButton: { backgroundColor: "blue", width: 100, borderRadius: 20 },
+  profileButton: {
+    backgroundColor: "blue",
+    width: 100,
+    borderRadius: 20,
+    marginVertical: 5,
+  },
   username: { fontSize: 20, fontFamily: "alexandriaRegular" },
 });
 export default Account;

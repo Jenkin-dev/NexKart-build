@@ -86,7 +86,7 @@ const Login = () => {
   useEffect(() => {
     const getUserName = async () => {
       try {
-        const userName = await AsyncStorage.getItem("User");
+        const userName = await AsyncStorage.getItem("savedUsername");
         if (userName) {
           setZusUsername(userName);
           setStoredUser(userName);
@@ -165,16 +165,21 @@ const Login = () => {
                 if (password.length >= 6) {
                   setLoading(true);
                   try {
-                    // Convert the username (e.g., "Jenkins") to a fake email "jenkins@nexkart.com"
-                    // .trim() and .toLowerCase() ensure consistency
-                    const internalEmail = `${zusUsername.trim().toLowerCase()}@nexkart.com`;
-
-                    console.log("Attempting login for:", internalEmail);
+                    // const savedUsername = await AsyncStorage.getItem("User");
+                    const emailAddress =
+                      await AsyncStorage.getItem("savedEmail");
+                    const savedUsername =
+                      await AsyncStorage.getItem("savedUsername");
+                    console.log(
+                      "Attempting login for:",
+                      emailAddress,
+                      savedUsername,
+                    );
 
                     // This tells Firebase to sign in
                     await signInWithEmailAndPassword(
                       auth,
-                      internalEmail,
+                      emailAddress,
                       password,
                     );
 
