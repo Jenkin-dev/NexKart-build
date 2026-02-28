@@ -42,7 +42,10 @@ const ExistingUser = () => {
       // Update AsyncStorage so next time the "Login" screen greets this new user
       await AsyncStorage.setItem("User", username);
     } catch (error) {
-      Alert.alert("Login Failed", "No account found with these details.");
+      Alert.alert(
+        "Login Failed",
+        "Confirm login details/Check internet connection.",
+      );
       console.error(error);
     } finally {
       setLoading(false);
