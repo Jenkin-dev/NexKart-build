@@ -75,7 +75,7 @@ const ExistingUser = () => {
 
           Alert.alert(
             "Success",
-            `A password reset link has been sent to ${emailAddress}`,
+            `A password reset link has been sent to ${emailAddress} check your spam mails if not found in primary inbox`,
           );
         } catch (error) {
           console.error("Reset Error:", error);
@@ -94,7 +94,7 @@ const ExistingUser = () => {
             onPress: () => sendPasswordReset(),
           },
           {
-            text: "Cancel  ",
+            text: "Try Again  ",
             onPress: () => console.log("Cancel Pressed"),
             style: "cancel",
           },
