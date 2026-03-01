@@ -109,7 +109,11 @@ const ExistingUser = () => {
   return (
     <SafeView>
       <TopTab style={{ position: "relative", top: 0.025 * height }} />
-      <ScrollView>
+      <ScrollView
+        style={{
+          display: sendingmail ? "none" : undefined,
+        }}
+      >
         <View style={{ marginHorizontal: 30 }}>
           <View
             style={{
@@ -154,20 +158,20 @@ const ExistingUser = () => {
                 Don't have an account? Sign up
               </Text>
             </TouchableOpacity>
-            {sendingmail ? (
-              <Text
-                style={{
-                  fontSize: 26,
-                  fontFamily: "alexandriaRegular",
-                  color: "grey",
-                }}
-              >
-                Sending mail
-              </Text>
-            ) : undefined}
           </View>
         </View>
       </ScrollView>
+      {sendingmail ? (
+        <Text
+          style={{
+            fontSize: 26,
+            fontFamily: "alexandriaRegular",
+            color: "grey",
+          }}
+        >
+          Sending mail
+        </Text>
+      ) : undefined}
     </SafeView>
   );
 };
