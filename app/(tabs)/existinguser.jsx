@@ -16,7 +16,10 @@ import TopTab from "../../components/toptab";
 import Input from "../../components/input";
 import Passwordinput from "../../components/passwordInput";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { auth, db } from "../../services/firebase";
 import { doc, getDoc } from "firebase/firestore";
 
@@ -25,6 +28,7 @@ const ExistingUser = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { width, height } = Dimensions.get("screen");
+  const [sendingmail, setSendingMail] = useState(false);
 
   const handleLogin = async () => {
     if (!email || password.length < 6) {
@@ -51,9 +55,50 @@ const ExistingUser = () => {
       }
       await AsyncStorage.setItem("savedEmail", emailAddress);
     } catch (error) {
+      const emailAddress = email.trim().toLowerCase();
+
+      const sendPasswordReset = async () => {
+        try {
+          setSendingMail(true);
+          // 1. Get the email that was saved during signup or previous login
+
+          if (!emailAddress) {
+            Alert.alert(
+              "Error",
+              "No email found. Please sign in manually first.",
+            );
+            return;
+          }
+
+          // 2. Trigger the Firebase reset email
+          await sendPasswordResetEmail(auth, emailAddress);
+
+          Alert.alert(
+            "Success",
+            `A password reset link has been sent to ${emailAddress}`,
+          );
+        } catch (error) {
+          console.error("Reset Error:", error);
+          Alert.alert("Reset Failed", error.message);
+        } finally {
+          setSendingMail(false);
+        }
+      };
+
       Alert.alert(
         "Login Failed",
         "Confirm login details/Check internet connection.",
+        [
+          {
+            text: "Forgot Password",
+            onPress: () => sendPasswordReset(),
+          },
+          {
+            text: "Cancel  ",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
+          },
+        ],
       );
       console.error(error);
     } finally {
@@ -109,6 +154,17 @@ const ExistingUser = () => {
                 Don't have an account? Sign up
               </Text>
             </TouchableOpacity>
+            {sendingmail ? (
+              <Text
+                style={{
+                  fontSize: 26,
+                  fontFamily: "alexandriaRegular",
+                  color: "grey",
+                }}
+              >
+                Sending mail
+              </Text>
+            ) : undefined}
           </View>
         </View>
       </ScrollView>

@@ -12,11 +12,11 @@ import { useState } from "react";
 import Button from "../components/button";
 import { router, useLocalSearchParams } from "expo-router";
 import * as SecureStore from "expo-secure-store";
-import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
+
 import { auth, db } from "../services/firebase";
 import { useRef } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { PhoneAuthProvider } from "firebase/auth";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { doc, setDoc } from "firebase/firestore";
 
@@ -105,11 +105,12 @@ const Mobile = () => {
         <Button
           onPress={handleCreateAccount}
           style={{
-            backgroundColor: loading ? "gray" : "#3dbecb",
+            backgroundColor: loading ? "white" : "#3dbecb",
             marginBottom: 2,
           }}
           text={loading ? "Creating Account" : "Finish Signup"}
-          textColor={loading ? "grey" : "#4C69FF"}
+          textColor={loading ? "grey" : "white"}
+          fontfamily={"alexandriaSemibold"}
         />
       </KeyboardAvoidingView>
     </SafeView>

@@ -22,7 +22,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
 import { useUsername } from "../../store/useUsername";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { auth } from "../../services/firebase";
 
 const Login = () => {
@@ -31,13 +34,40 @@ const Login = () => {
   const { width } = Dimensions.get("screen");
   const { height } = Dimensions.get("screen");
   const [loading, setLoading] = useState(false);
+  const [sendingmail, setSendingMail] = useState(false);
 
   const [storedUser, setStoredUser] = useState("");
   const [storedPassword, setStoredPassword] = useState("");
 
+  const handleForgotPassword = async () => {
+    try {
+      setSendingMail(true);
+      // 1. Get the email that was saved during signup or previous login
+      const emailAddress = await AsyncStorage.getItem("savedEmail");
+
+      if (!emailAddress) {
+        Alert.alert("Error", "No email found. Please sign in manually first.");
+        return;
+      }
+
+      // 2. Trigger the Firebase reset email
+      await sendPasswordResetEmail(auth, emailAddress);
+
+      Alert.alert(
+        "Success",
+        `A password reset link has been sent to ${emailAddress}`,
+      );
+    } catch (error) {
+      console.error("Reset Error:", error);
+      Alert.alert("Reset Failed", error.message);
+    } finally {
+      setSendingMail(false);
+    }
+  };
+
   const styles = StyleSheet.create({
     forgotPassword: {
-      color: "#4C69FF",
+      color: sendingmail ? "grey" : "#4C69FF",
       fontFamily: "regular",
       fontSize: 13,
     },
@@ -199,8 +229,12 @@ const Login = () => {
                 }
               }}
             />
-            <TouchableOpacity>
-              <Text style={styles.forgotPassword}>Forgot Password</Text>
+            <TouchableOpacity onPress={handleForgotPassword}>
+              <Text style={styles.forgotPassword}>
+                {sendingmail
+                  ? "Sending password reset email"
+                  : "Forgot Password"}
+              </Text>
             </TouchableOpacity>
           </View>
 
