@@ -17,17 +17,29 @@ import { LinearGradient } from "expo-linear-gradient";
 import Input from "../components/input";
 import { useWishlistStore } from "../store/wishliststore";
 import { auth } from "../services/firebase";
+import { ImageMap } from "../utils/imageMap";
+import { fetchProducts } from "../services/firebaseFetchProducts";
 
 const Home = () => {
   const [incoming, setIncoming] = useState(false);
   const [searching, setSearching] = useState(false);
   const { height } = Dimensions.get("screen");
-
+  const [homeitems, setHomeitems] = useState([]);
   // Zustand store methods
   const loadWishlist = useWishlistStore((state) => state.loadWishlist);
 
   // Load wishlist for logged-in user
   useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        const products = await fetchProducts();
+        setHomeitems(products);
+      } catch (err) {
+        console.error("Error fetching products:", err);
+      }
+    };
+    loadProducts();
+
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         loadWishlist(); // load user-specific wishlist from Firestore
@@ -37,74 +49,74 @@ const Home = () => {
     return () => unsubscribe();
   }, []);
 
-  const homeitems = [
-    {
-      id: "001",
-      source: require("../assets/images/mouse.png"),
-      noItems: "33 sold",
-      itemPrice: "USD 100.00",
-    },
-    {
-      id: "002",
-      source: require("../assets/images/phone.png"),
-      noItems: "8 sold",
-      itemPrice: "USD 360.00",
-    },
-    {
-      id: "003",
-      source: require("../assets/images/cardimage3.png"),
-      noItems: "6 sold",
-      itemPrice: "USD 80.00",
-    },
-    {
-      id: "004",
-      source: require("../assets/images/smartwatch.png"),
-      noItems: "Only 2 left",
-      itemPrice: "USD 280.00",
-    },
-    {
-      id: "005",
-      source: require("../assets/images/airpod.png"),
-      noItems: "15 sold",
-      itemPrice: "USD 30.00",
-    },
-    {
-      id: "006",
-      source: require("../assets/images/phone2.png"),
-      noItems: "33 sold",
-      itemPrice: "USD 869.00",
-    },
-    {
-      id: "007",
-      source: require("../assets/images/amazonecho.png"),
-      noItems: "13 sold",
-      itemPrice: "USD 160.00",
-    },
-    {
-      id: "008",
-      source: require("../assets/images/Pixel3.png"),
-      noItems: "4 sold",
-      itemPrice: "USD 1200.00",
-    },
-    {
-      id: "009",
-      source: require("../assets/images/xiaomia2lute.png"),
-      noItems: "3 sold",
-      itemPrice: "USD 100.00",
-    },
-    {
-      id: "010",
-      source: require("../assets/images/iphonexr.png"),
-      noItems: "7 sold",
-      itemPrice: "USD 680.00",
-    },
-    {
-      id: "011",
-      source: require("../assets/images/XIaomMiMix3.png"),
-      noItems: "7 sold",
-      itemPrice: "USD 160.00",
-    },
-  ];
+  // const homeitems = [
+  //   {
+  //     id: "001",
+  //     source: require("../assets/images/mouse.png"),
+  //     noItems: "33 sold",
+  //     itemPrice: "USD 100.00",
+  //   },
+  //   {
+  //     id: "002",
+  //     source: require("../assets/images/phone.png"),
+  //     noItems: "8 sold",
+  //     itemPrice: "USD 360.00",
+  //   },
+  //   {
+  //     id: "003",
+  //     source: require("../assets/images/cardimage3.png"),
+  //     noItems: "6 sold",
+  //     itemPrice: "USD 80.00",
+  //   },
+  //   {
+  //     id: "004",
+  //     source: require("../assets/images/smartwatch.png"),
+  //     noItems: "Only 2 left",
+  //     itemPrice: "USD 280.00",
+  //   },
+  //   {
+  //     id: "005",
+  //     source: require("../assets/images/airpod.png"),
+  //     noItems: "15 sold",
+  //     itemPrice: "USD 30.00",
+  //   },
+  //   {
+  //     id: "006",
+  //     source: require("../assets/images/phone2.png"),
+  //     noItems: "33 sold",
+  //     itemPrice: "USD 869.00",
+  //   },
+  //   {
+  //     id: "007",
+  //     source: require("../assets/images/amazonecho.png"),
+  //     noItems: "13 sold",
+  //     itemPrice: "USD 160.00",
+  //   },
+  //   {
+  //     id: "008",
+  //     source: require("../assets/images/Pixel3.png"),
+  //     noItems: "4 sold",
+  //     itemPrice: "USD 1200.00",
+  //   },
+  //   {
+  //     id: "009",
+  //     source: require("../assets/images/xiaomia2lute.png"),
+  //     noItems: "3 sold",
+  //     itemPrice: "USD 100.00",
+  //   },
+  //   {
+  //     id: "010",
+  //     source: require("../assets/images/iphonexr.png"),
+  //     noItems: "7 sold",
+  //     itemPrice: "USD 680.00",
+  //   },
+  //   {
+  //     id: "011",
+  //     source: require("../assets/images/XIaomMiMix3.png"),
+  //     noItems: "7 sold",
+  //     itemPrice: "USD 160.00",
+  //   },
+  // ];
 
   return (
     <View style={{ flex: 1 }}>
@@ -203,9 +215,10 @@ const Home = () => {
               <HomeItems
                 key={item.id}
                 id={item.id}
-                source={item.source}
+                source={ImageMap[item.imageKey]}
                 noItems={item.noItems}
                 itemPrice={item.itemPrice}
+                name={item.name}
               />
             ))}
           </View>

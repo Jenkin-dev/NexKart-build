@@ -32,6 +32,7 @@ const Wishlist = () => {
                 source={item.source}
                 noItems={item.noItems}
                 itemPrice={item.itemPrice}
+                name={item.name}
               />
             ))
           ) : (
