@@ -1,27 +1,41 @@
 import {
   Dimensions,
   Image,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-// import SafeView from "../components/safe-view";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { router } from "expo-router";
 import SpecialDeals from "../components/specialdeals";
 import HomeItems from "../components/homeitem";
 import Button from "../components/button";
 import { LinearGradient } from "expo-linear-gradient";
 import Input from "../components/input";
+import { useWishlistStore } from "../store/wishliststore";
+import { auth } from "../services/firebase";
+
 const Home = () => {
   const [incoming, setIncoming] = useState(false);
   const [searching, setSearching] = useState(false);
   const { height } = Dimensions.get("screen");
-  // console.log(height);
+
+  // Zustand store methods
+  const loadWishlist = useWishlistStore((state) => state.loadWishlist);
+
+  // Load wishlist for logged-in user
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        loadWishlist(); // load user-specific wishlist from Firestore
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const homeitems = [
     {
@@ -107,6 +121,7 @@ const Home = () => {
       >
         <Input inputtype={"Search for a product"} />
       </LinearGradient>
+
       <SafeAreaView
         style={{
           paddingHorizontal: 20,
@@ -115,14 +130,7 @@ const Home = () => {
           backgroundColor: "#bddcf6",
         }}
       >
-        <View
-          style={[
-            styles.top,
-            {
-              display: searching ? "none" : undefined,
-            },
-          ]}
-        >
+        <View style={[styles.top, { display: searching ? "none" : undefined }]}>
           <TouchableOpacity onPress={() => router.push("/Sidemenu")}>
             <Image
               style={{ width: 20, height: 20, resizeMode: "center" }}
@@ -142,6 +150,7 @@ const Home = () => {
             </View>
           </View>
         </View>
+
         <ScrollView
           style={{ flex: 1 }}
           contentContainerStyle={styles.scrollContent}
@@ -179,19 +188,9 @@ const Home = () => {
                 cardSub={"FIND POPULAR DEALS \nAS LOW AS $20.00"}
                 source={require("../assets/images/cardwatch.png")}
               />
-
-              <SpecialDeals
-                linearcolors={["#5565FB", "cyan"]}
-                linearstart={{ x: 0, y: 0 }}
-                linearend={{ x: 1, y: 1 }}
-                cardTopic={"NEW MONTH, NEW ME"}
-                styleTopic={styles.cardtopic}
-                styleSub={styles.cardsub}
-                cardSub={"BEST DEALS UP \nTO 80% OFF"}
-                source={require("../assets/images/shoe.png")}
-              />
             </ScrollView>
           </View>
+
           <View
             style={{
               flexDirection: "row",
@@ -211,6 +210,7 @@ const Home = () => {
             ))}
           </View>
         </ScrollView>
+
         <Button
           onPress={() => setSearching(!searching)}
           style={{
@@ -221,7 +221,6 @@ const Home = () => {
             height: 40,
             borderRadius: 20,
             borderWidth: 0,
-            // position: "fixed",
             backgroundColor: "#5599FB",
           }}
           icon={
@@ -241,36 +240,16 @@ const Home = () => {
 };
 
 const styles = StyleSheet.create({
-  cardtopic: {
-    color: "#F9FF00",
-    fontFamily: "alexandriaMedium",
-    fontSize: 17,
-  },
-
+  cardtopic: { color: "#F9FF00", fontFamily: "alexandriaMedium", fontSize: 17 },
   cardsub: { color: "white", fontFamily: "alexandriaRegular", fontSize: 20 },
-
-  cardtopic2: {
-    color: "black",
-    fontFamily: "alexandriaLight",
-    fontSize: 17,
-  },
-  icon: {
-    height: 24,
-    width: 24,
-    // position: "relative",
-    // left: -50,
-    // top: 2,
-    // marginBottom: 5,
-    // alignSelf: "center",
-  },
+  cardtopic2: { color: "black", fontFamily: "alexandriaLight", fontSize: 17 },
+  icon: { height: 24, width: 24 },
   cardsub2: { color: "white", fontFamily: "alexandriaRegular", fontSize: 20 },
   numberText: {
     backgroundColor: "#FF4C96",
     borderRadius: 20,
     width: 24,
     height: 24,
-
-    // flexDirection: "row",
     justifyContent: "center",
   },
   subtext: {
@@ -278,23 +257,15 @@ const styles = StyleSheet.create({
     fontSize: 15,
     alignSelf: "center",
     color: "white",
-    // textAlign: "center",
   },
-
   top: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: 0,
   },
-
-  scrollContent: {
-    // flex: 1,
-    paddingBottom: 30,
-  },
-  horizontalScrollContent: {
-    paddingHorizontal: 10,
-    gap: 10,
-  },
+  scrollContent: { paddingBottom: 30 },
+  horizontalScrollContent: { paddingHorizontal: 10, gap: 10 },
 });
+
 export default Home;

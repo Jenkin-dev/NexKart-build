@@ -1,32 +1,53 @@
+// store/wishliststore.js
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { auth, db } from "../services/firebase";
+import {
+  collection,
+  getDocs,
+  setDoc,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
 
-export const useWishlistStore = create(
-  persist(
-    (set, get) => ({
-      wishlist: [],
+export const useWishlistStore = create((set, get) => ({
+  wishlist: [],
 
-      // Toggle like/unlike
-      toggleLike: (product) => {
-        const { wishlist } = get();
-        const isExist = wishlist.find((item) => item.id === product.id);
+  // Load wishlist from Firestore
+  loadWishlist: async () => {
+    const user = auth.currentUser;
+    if (!user) return;
 
-        if (isExist) {
-          // Remove if already liked
-          set({ wishlist: wishlist.filter((item) => item.id !== product.id) });
-        } else {
-          // Add to wishlist
-          set({ wishlist: [...wishlist, product] });
-        }
-      },
+    const snapshot = await getDocs(
+      collection(db, "users", user.uid, "wishlist"),
+    );
+    const items = snapshot.docs.map((doc) => doc.data());
 
-      // Check if a specific item is liked
-      isLiked: (id) => get().wishlist.some((item) => item.id === id),
-    }),
-    {
-      name: "wishlist-storage", // unique name
-      storage: createJSONStorage(() => AsyncStorage),
-    },
-  ),
-);
+    set({ wishlist: items });
+  },
+
+  // Toggle like/unlike in Firestore
+  toggleLike: async (product) => {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const exists = get().wishlist.find((item) => item.id === product.id);
+
+    if (exists) {
+      // Remove from Firestore
+      await deleteDoc(doc(db, "users", user.uid, "wishlist", product.id));
+      set({
+        wishlist: get().wishlist.filter((item) => item.id !== product.id),
+      });
+    } else {
+      // Add to Firestore
+      await setDoc(doc(db, "users", user.uid, "wishlist", product.id), product);
+      set({ wishlist: [...get().wishlist, product] });
+    }
+  },
+
+  // Check if item is liked
+  isLiked: (id) => get().wishlist.some((item) => item.id === id),
+
+  // Clear wishlist (e.g., on logout)
+  clearWishlist: () => set({ wishlist: [] }),
+}));
