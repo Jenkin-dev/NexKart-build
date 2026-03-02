@@ -3,6 +3,7 @@ import Button from "./button";
 import { useWishlistStore } from "../store/wishliststore";
 import { useState } from "react";
 import { router } from "expo-router";
+import { ImageMap } from "../utils/imageMap";
 
 const HomeItems = ({ id, name, source, noItems, itemPrice }) => {
   const toggleLike = useWishlistStore((state) => state.toggleLike);
@@ -27,8 +28,12 @@ const HomeItems = ({ id, name, source, noItems, itemPrice }) => {
 
   return (
     <TouchableOpacity style={styles.card} onPress={handleCardPress}>
-      <Image style={styles.image} source={source} resizeMode="contain" />
-      {/* <Text style={styles.number}>{productName}</Text> */}
+      <Image
+        style={styles.image}
+        source={ImageMap[source]}
+        resizeMode="contain"
+      />
+
       <Text style={styles.number}>{noItems}</Text>
       <Text style={styles.number}>{name}</Text>
       {!process && (

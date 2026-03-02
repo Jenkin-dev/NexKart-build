@@ -1,12 +1,18 @@
 import { StyleSheet, Text } from "react-native";
 import { Image, View } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { useCartStore } from "../store/useCartStore";
 import { useState } from "react";
 
-const AddedToCarts = ({ source, productname, productprice }) => {
-  const [qty, setQty] = useState(1);
+const AddedToCarts = ({ id, source, productname, productprice, qty }) => {
+  //   const [qty, setQty] = useState(1);
+
+  const updateQuantity = useCartStore((state) => state.updateQuantity);
+
   return (
-    <View style={{ flexDirection: "row", gap: 25 }}>
+    <View
+      style={{ flexDirection: "row", gap: 25, marginBottom: 25, width: "100%" }}
+    >
       <View>
         <Image
           source={source}
@@ -24,7 +30,7 @@ const AddedToCarts = ({ source, productname, productprice }) => {
             color="#4C69FF"
             onPress={() => {
               if (qty > 0) {
-                setQty(qty - 1);
+                updateQuantity(id, -1);
               }
             }}
           />
@@ -33,7 +39,7 @@ const AddedToCarts = ({ source, productname, productprice }) => {
             name="plus-square"
             size={24}
             color="#4C69FF"
-            onPress={() => setQty(qty + 1)}
+            onPress={() => updateQuantity(id, 1)}
           />
         </View>
       </View>

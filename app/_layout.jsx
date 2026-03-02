@@ -5,6 +5,10 @@ import { auth } from "../services/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { View, ActivityIndicator } from "react-native";
 
+// Import your stores to trigger data fetching
+import { useCartStore } from "../store/useCartStore";
+import { useWishlistStore } from "../store/wishliststore";
+
 const RootLayout = () => {
   const [loaded, error] = useFonts({
     regular: require("../assets/fonts/Roboto-Regular.ttf"),
@@ -31,35 +35,47 @@ const RootLayout = () => {
   const router = useRouter();
   const segments = useSegments();
 
-  // Listen for auth state changes
+  // Listen for auth state changes AND fetch user data
   useEffect(() => {
-    const subscriber = onAuthStateChanged(auth, (user) => {
+    const subscriber = onAuthStateChanged(auth, async (user) => {
       setUser(user);
+
+      if (user) {
+        // User logged in: Load their Cart and Wishlist from Firestore
+        await useCartStore.getState().loadCart();
+        if (useWishlistStore.getState().loadWishlist) {
+          await useWishlistStore.getState().loadWishlist();
+        }
+      } else {
+        // User logged out: Wipe local memory
+        useCartStore.getState().clearCart();
+        if (useWishlistStore.getState().clearWishlist) {
+          useWishlistStore.getState().clearWishlist();
+        }
+      }
+
       if (initializing) setInitializing(false);
     });
-    return subscriber; // unsubscribe on unmount
+    return subscriber;
   }, [initializing]);
 
-  // Handle redirection logic
   useEffect(() => {
     if (initializing) return;
 
-    // 1. Define which screens are "Auth" screens (where users go when NOT logged in)
     const isAuthScreen =
       segments[0] === "Login" ||
       segments[0] === "Signup" ||
       segments[0] === "ExistingUser" ||
       segments[0] === "Mobile" ||
-      segments[0] === "(tabs)"; // Assuming Login/Signup are inside (tabs)
+      segments[0] === "(tabs)";
 
     if (!user && !isAuthScreen && segments[0] !== "OTP") {
-      // If no user and trying to go to Home/Profile, force Login
       router.replace("/(tabs)/Login");
     } else if (user && isAuthScreen) {
-      // If user IS logged in and trying to access Login/Signup, force Home
       router.replace("/Home");
     }
   }, [user, segments, initializing]);
+
   if (initializing) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>

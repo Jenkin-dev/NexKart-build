@@ -2,15 +2,18 @@ import { router } from "expo-router";
 
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import WishedItems from "../components/wisheditems";
+// import WishedItems from "../components/wisheditems";
 import { ScrollView } from "react-native";
 import { useState } from "react";
 import Button from "../components/button";
 import AddedToCarts from "../components/addedToCarts";
 import { ImageMap } from "../utils/imageMap";
+import { useCartStore } from "../store/useCartStore";
 
 const Carts = () => {
-  const [empty, setEmpty] = useState(true);
+  const cartItems = useCartStore((state) => state.cart);
+
+  const isEmpty = cartItems.length === 0;
 
   return (
     <SafeAreaView
@@ -30,37 +33,37 @@ const Carts = () => {
         </TouchableOpacity>
       </View>
       <Text style={styles.pageHead}>My Cart</Text>
-      <ScrollView>
-        <View
-          style={{
-            display: empty ? undefined : "none",
-          }}
-        >
-          <Image
-            source={require("../assets/images/emptyCart.png")}
-            style={styles.image}
-            //   resizeMode="center"
-          />
-          <Text style={styles.emptyText}>Nothing on interest lately?</Text>
-          <Text style={[styles.emptyText, { fontSize: 15 }]}>
-            Browse through the app to check out for products and who knows you
-            could get some discounts
-          </Text>
-        </View>
-
-        <View style={[styles.cart, { display: empty ? "none" : undefined }]}>
-          <AddedToCarts
-            source={ImageMap.shoes}
-            productname={"Nike Shoes"}
-            productprice={"USD 160"}
-          />
-        </View>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {isEmpty ? (
+          <View>
+            <Image
+              source={require("../assets/images/emptyCart.png")}
+              style={styles.image}
+              resizeMode="contain"
+            />
+            <Text style={styles.emptyText}>Nothing of interest lately?</Text>
+            <Text style={[styles.emptyText, { fontSize: 15, marginTop: 10 }]}>
+              Browse through the app to check out products and who knows, you
+              could get some discounts.
+            </Text>
+          </View>
+        ) : (
+          /* Dynamic Cart Items List */
+          <View style={styles.cart}>
+            {cartItems.map((item) => (
+              <AddedToCarts
+                key={item.id}
+                id={item.id}
+                // Translate the cloud string back into a local asset
+                source={ImageMap[item.imageKey]}
+                productname={item.name}
+                productprice={item.itemPrice || item.price}
+                qty={item.qty}
+              />
+            ))}
+          </View>
+        )}
       </ScrollView>
-      <Button
-        onPress={() => setEmpty(!empty)}
-        textColor={"white"}
-        text={!empty ? "Show empty Cart" : "View added products "}
-      />
     </SafeAreaView>
   );
 };

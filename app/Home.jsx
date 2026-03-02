@@ -153,7 +153,7 @@ const Home = () => {
               <HomeItems
                 key={item.id}
                 id={item.id}
-                source={ImageMap[item.imageKey]}
+                source={item.imageKey}
                 noItems={item.noItems}
                 itemPrice={item.itemPrice}
                 name={item.name}

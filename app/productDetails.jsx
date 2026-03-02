@@ -16,13 +16,22 @@ import { useEffect, useState } from "react";
 import { getDoc, doc } from "firebase/firestore";
 import { db } from "../services/firebase";
 import { ImageMap } from "../utils/imageMap";
+import { useCartStore } from "../store/useCartStore";
+import { useWishlistStore } from "../store/wishliststore";
 
 const ProductDetails = () => {
-  const { height } = Dimensions.get("screen");
+  const { width, height } = Dimensions.get("screen");
   // Grab the data passed from the clicked card
   const { id } = useLocalSearchParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [process, setProcess] = useState(false);
+
+  //activating the stores
+  const addToCart = useCartStore((state) => state.addToCart);
+  const toggleLike = useWishlistStore((state) => state.toggleLike);
+  const isLiked = useWishlistStore((state) => state.isLiked(id));
+
   const [errorFetch, setErrorFetch] = useState(false);
 
   useEffect(() => {
@@ -45,8 +54,29 @@ const ProductDetails = () => {
     fetchProduct();
   }, [id]);
 
-  const handleAddToCart = () => {
-    Alert.alert("Success", `${product.name} added to cart!`);
+  const handleAddToCart = async () => {
+    if (product) {
+      await addToCart(product);
+      Alert.alert("Success", `${product.name} has been added to your cart!`);
+    }
+  };
+
+  const handleLikePress = async () => {
+    if (product) {
+      try {
+        setProcess(true);
+        await toggleLike({
+          id: product.id,
+          source: product.imageKey,
+          noItems: product.noItems,
+          name: product.name,
+          itemPrice: product.itemPrice,
+        });
+        console.log(product.imageKey);
+      } finally {
+        setProcess(false);
+      }
+    }
   };
 
   if (loading) {
@@ -85,6 +115,16 @@ const ProductDetails = () => {
         </TouchableOpacity>
         <Text style={styles.headerText}>Product Details</Text>
         <View style={{ width: 24 }} />
+        <TouchableOpacity onPress={handleLikePress} disabled={process}>
+          <Text
+            style={{
+              color: isLiked ? "#FF4C96" : "#ffff",
+              fontFamily: "alexandriaBold",
+            }}
+          >
+            {process ? "..." : isLiked ? "❤️ Liked" : "🤍 Like"}
+          </Text>
+        </TouchableOpacity>
       </View>
 
       <ScrollView
@@ -93,7 +133,7 @@ const ProductDetails = () => {
       >
         {/* Product Image Area */}
         <View style={styles.imageContainer}>
-          {product.imageKey ? (
+          {product.imageKey && ImageMap[product.imageKey] ? (
             <Image
               style={styles.productImage}
               source={ImageMap[product.imageKey]}
