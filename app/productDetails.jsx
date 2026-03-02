@@ -18,6 +18,7 @@ import { db } from "../services/firebase";
 import { ImageMap } from "../utils/imageMap";
 import { useCartStore } from "../store/useCartStore";
 import { useWishlistStore } from "../store/wishliststore";
+import { MaterialIcons } from "@expo/vector-icons";
 
 const ProductDetails = () => {
   const { width, height } = Dimensions.get("screen");
@@ -26,6 +27,7 @@ const ProductDetails = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [process, setProcess] = useState(false);
+  const [adding, setAdding] = useState(false);
 
   //activating the stores
   const addToCart = useCartStore((state) => state.addToCart);
@@ -56,8 +58,16 @@ const ProductDetails = () => {
 
   const handleAddToCart = async () => {
     if (product) {
-      await addToCart(product);
-      Alert.alert("Success", `${product.name} has been added to your cart!`);
+      try {
+        setAdding(true);
+        await addToCart(product);
+        Alert.alert(
+          "Success",
+          `${product.name} quanity has been incremented by 1 in your cart!`,
+        );
+      } finally {
+        setAdding(false);
+      }
     }
   };
 
@@ -116,14 +126,11 @@ const ProductDetails = () => {
         <Text style={styles.headerText}>Product Details</Text>
         <View style={{ width: 24 }} />
         <TouchableOpacity onPress={handleLikePress} disabled={process}>
-          <Text
-            style={{
-              color: isLiked ? "#FF4C96" : "#ffff",
-              fontFamily: "alexandriaBold",
-            }}
-          >
-            {process ? "..." : isLiked ? "❤️ Liked" : "🤍 Like"}
-          </Text>
+          {isLiked ? (
+            <MaterialIcons name="favorite" size={24} color="#ff4c28" />
+          ) : (
+            <MaterialIcons name="favorite-outline" size={24} color="#ff4c28" />
+          )}
         </TouchableOpacity>
       </View>
 
@@ -169,9 +176,9 @@ const ProductDetails = () => {
       <View style={styles.bottomBar}>
         <Button
           onPress={handleAddToCart}
-          text="Add to Cart"
-          bgcolor="#4C69FF"
-          textColor="white"
+          text={adding ? "Adding product to Cart" : "Add to Cart"}
+          bgcolor={adding ? "#bddcf6" : "#4C69FF"}
+          textColor={adding ? "grey" : "white"}
           fontfamily="alexandriaBold"
           style={styles.cartButton}
         />

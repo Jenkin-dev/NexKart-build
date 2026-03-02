@@ -31,7 +31,9 @@ export const useCartStore = create((set, get) => ({
     let updatedCart;
     if (existingItem) {
       // Item exists, increase quantity
-      Alert.alert("Success", "Item already exists in the cart");
+      updatedCart = cart.map((item) =>
+        item.id === product.id ? { ...item, qty: (item.qty || 1) + 1 } : item,
+      );
     } else {
       // New item, set initial quantity to 1
       updatedCart = [...cart, { ...product, qty: 1 }];

@@ -19,6 +19,7 @@ import { useWishlistStore } from "../store/wishliststore";
 import { auth } from "../services/firebase";
 import { ImageMap } from "../utils/imageMap";
 import { fetchProducts } from "../services/firebaseFetchProducts";
+import { MaterialCommunityIcons, Zocial } from "@expo/vector-icons";
 
 const Home = () => {
   const [incoming, setIncoming] = useState(false);
@@ -87,14 +88,21 @@ const Home = () => {
               }
             />
           </TouchableOpacity>
-          <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
-            <Text style={{ fontFamily: "alexandriaRegular", fontSize: 20 }}>
-              My Cart
-            </Text>
-            <View style={styles.numberText}>
-              <Text style={styles.subtext}>8</Text>
-            </View>
-          </View>
+          <TouchableOpacity
+            style={{
+              flexDirection: "row",
+              gap: 10,
+              alignItems: "center",
+              paddingHorizontal: 0,
+            }}
+            onPress={() => router.push("/carts")}
+          >
+            <MaterialCommunityIcons
+              name="cart-variant"
+              size={24}
+              color="black"
+            />
+          </TouchableOpacity>
         </View>
 
         <ScrollView
