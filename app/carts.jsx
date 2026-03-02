@@ -6,19 +6,12 @@ import WishedItems from "../components/wisheditems";
 import { ScrollView } from "react-native";
 import { useState } from "react";
 import Button from "../components/button";
+import AddedToCarts from "../components/addedToCarts";
+import { ImageMap } from "../utils/imageMap";
 
 const Carts = () => {
   const [empty, setEmpty] = useState(true);
 
-  const Addtocart = () => {
-    return (
-      <View>
-        <View></View>
-        <View></View>
-        <View></View>
-      </View>
-    );
-  };
   return (
     <SafeAreaView
       style={{
@@ -56,16 +49,17 @@ const Carts = () => {
         </View>
 
         <View style={[styles.cart, { display: empty ? "none" : undefined }]}>
-          {/* <WishedItems />
-          <WishedItems />
-          <WishedItems />
-          <WishedItems /> */}
+          <AddedToCarts
+            source={ImageMap.shoes}
+            productname={"Nike Shoes"}
+            productprice={"USD 160"}
+          />
         </View>
       </ScrollView>
       <Button
         onPress={() => setEmpty(!empty)}
         textColor={"white"}
-        text={!empty ? "Clear Cart" : "Discover more products"}
+        text={!empty ? "Show empty Cart" : "View added products "}
       />
     </SafeAreaView>
   );

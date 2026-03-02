@@ -112,7 +112,7 @@ const ProductDetails = () => {
               <Text style={styles.statText}>{product.noItems}</Text>
             </View>
             <View style={styles.statBadge}>
-              <Text style={styles.statText}>⭐️ 4.8 Ratings</Text>
+              <Text style={styles.statText}>⭐ 4.8 Ratings</Text>
             </View>
           </View>
 
