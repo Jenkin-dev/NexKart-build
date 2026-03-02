@@ -1,17 +1,27 @@
 import { StyleSheet, TouchableOpacity, Text, Image } from "react-native";
 import Button from "./button";
 import { useWishlistStore } from "../store/wishliststore";
+import { useState } from "react";
+import { router } from "expo-router";
 
 const HomeItems = ({ id, name, source, noItems, itemPrice }) => {
   const toggleLike = useWishlistStore((state) => state.toggleLike);
   const isLiked = useWishlistStore((state) => state.isLiked(id));
+  const [process, setProcess] = useState(false);
 
   const handlePress = () => {
     toggleLike({ id, source, noItems, name, itemPrice });
   };
 
+  const handleCardPress = () => {
+    router.push({
+      pathname: "/productDetails",
+      params: { id, name, source, itemPrice, noItems }, // Pass the data!
+    });
+  };
+
   return (
-    <TouchableOpacity style={styles.card}>
+    <TouchableOpacity style={styles.card} onPress={handleCardPress}>
       <Image style={styles.image} source={source} resizeMode="contain" />
       {/* <Text style={styles.number}>{productName}</Text> */}
       <Text style={styles.number}>{noItems}</Text>

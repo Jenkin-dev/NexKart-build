@@ -10,4 +10,5 @@ export const ImageMap = {
   xiaomia2lute: require("../assets/images/xiaomia2lute.png"),
   iphonexr: require("../assets/images/iphonexr.png"),
   XIaomMiMix3: require("../assets/images/XIaomMiMix3.png"),
+  order2: require("../assets/images/order2.png"),
 };

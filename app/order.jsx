@@ -44,7 +44,7 @@ const Orders = () => {
       status: "Shipped",
       items: [
         {
-          source: require("../assets/images/watchorder.png"),
+          source: require("../assets/images/smartwatch.png"),
           name: "FitBit Versa",
           price: "USD 280",
           color: "Black",

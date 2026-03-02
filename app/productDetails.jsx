@@ -1,0 +1,156 @@
+import {
+  Dimensions,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Alert,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { router, useLocalSearchParams } from "expo-router";
+import Button from "../components/button";
+import { ImageMap } from "../utils/imageMap";
+
+const ProductDetails = () => {
+  const { width, height } = Dimensions.get("screen");
+  // Grab the data passed from the clicked card
+  const { id, name, itemPrice, source, noItems } = useLocalSearchParams();
+
+  const handleAddToCart = () => {
+    Alert.alert("Success", `${name} added to cart!`);
+  };
+
+  return (
+    <SafeAreaView style={styles.safeview}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Image
+            style={styles.icon}
+            source={require("../assets/images/back.png")}
+          />
+        </TouchableOpacity>
+        <Text style={styles.headerText}>Product Details</Text>
+        <View style={{ width: 24 }} />
+      </View>
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 100 }}
+      >
+        {/* Product Image Area */}
+        <View style={styles.imageContainer}>
+          {source ? (
+            <Image
+              style={styles.productImage}
+              source={source}
+              resizeMode="contain"
+            />
+          ) : null}
+        </View>
+
+        {/* Product Info */}
+        <View style={styles.infoContainer}>
+          <Text style={styles.productName}>{name}</Text>
+          <Text style={styles.productPrice}>{itemPrice}</Text>
+
+          <View style={styles.statsRow}>
+            <View style={styles.statBadge}>
+              <Text style={styles.statText}>{noItems}</Text>
+            </View>
+            <View style={styles.statBadge}>
+              <Text style={styles.statText}>⭐️ 4.8 Ratings</Text>
+            </View>
+          </View>
+
+          <Text style={styles.sectionTitle}>Description</Text>
+          <Text style={styles.descriptionText}>
+            This is a premium high-quality {name}. Built with industry-leading
+            technology to ensure maximum durability and exceptional performance.
+            Get yours today before stock runs out!
+          </Text>
+        </View>
+      </ScrollView>
+
+      {/* Floating Add to Cart Button */}
+      <View style={styles.bottomBar}>
+        <Button
+          onPress={handleAddToCart}
+          text="Add to Cart"
+          bgcolor="#4C69FF"
+          textColor="white"
+          fontfamily="alexandriaBold"
+          style={styles.cartButton}
+        />
+      </View>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  safeview: { flex: 1, backgroundColor: "#bddcf6" },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    paddingBottom: 20,
+  },
+  icon: { width: 24, height: 24, resizeMode: "contain" },
+  headerText: { fontFamily: "alexandriaBold", fontSize: 20 },
+  imageContainer: {
+    width: "100%",
+    height: 300,
+    backgroundColor: "white",
+    borderBottomLeftRadius: 40,
+    borderBottomRightRadius: 40,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  productImage: { width: "70%", height: "70%" },
+  infoContainer: { paddingHorizontal: 20, paddingTop: 30 },
+  productName: {
+    fontFamily: "alexandriaBold",
+    fontSize: 26,
+    marginBottom: 10,
+    color: "#333",
+  },
+  productPrice: {
+    fontFamily: "alexandriaBold",
+    fontSize: 22,
+    color: "#4C69FF",
+    marginBottom: 20,
+  },
+  statsRow: { flexDirection: "row", gap: 15, marginBottom: 30 },
+  statBadge: {
+    backgroundColor: "rgba(76, 105, 255, 0.1)",
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  statText: { fontFamily: "alexandriaRegular", color: "#4C69FF", fontSize: 13 },
+  sectionTitle: {
+    fontFamily: "alexandriaBold",
+    fontSize: 18,
+    marginBottom: 10,
+  },
+  descriptionText: {
+    fontFamily: "alexandriaLight",
+    fontSize: 15,
+    lineHeight: 24,
+    color: "#555",
+  },
+  bottomBar: {
+    position: "absolute",
+    bottom: 0,
+    width: "100%",
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    backgroundColor: "#bddcf6",
+  },
+  cartButton: { width: "100%", height: 55, borderRadius: 30 },
+});
+
+export default ProductDetails;
