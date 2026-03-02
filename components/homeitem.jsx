@@ -9,8 +9,13 @@ const HomeItems = ({ id, name, source, noItems, itemPrice }) => {
   const isLiked = useWishlistStore((state) => state.isLiked(id));
   const [process, setProcess] = useState(false);
 
-  const handlePress = () => {
-    toggleLike({ id, source, noItems, name, itemPrice });
+  const handlePress = async () => {
+    try {
+      setProcess(true);
+      await toggleLike({ id, source, noItems, name, itemPrice });
+    } finally {
+      setProcess(false);
+    }
   };
 
   const handleCardPress = () => {
@@ -26,15 +31,28 @@ const HomeItems = ({ id, name, source, noItems, itemPrice }) => {
       {/* <Text style={styles.number}>{productName}</Text> */}
       <Text style={styles.number}>{noItems}</Text>
       <Text style={styles.number}>{name}</Text>
-      <Button
-        onPress={handlePress}
-        textColor={isLiked ? "white" : "#3DBECB"}
-        style={styles.button}
-        bgcolor={isLiked ? "#3DBECB" : "white"}
-        text={isLiked ? "Liked" : "Like"}
-        fontfamily={"alexandriaLight"}
-        fontsize={13}
-      />
+      {!process && (
+        <Button
+          onPress={handlePress}
+          textColor={isLiked ? "white" : "#3DBECB"}
+          style={styles.button}
+          bgcolor={isLiked ? "#3DBECB" : "white"}
+          text={isLiked ? "Liked" : "Like"}
+          fontfamily={"alexandriaLight"}
+          fontsize={13}
+        />
+      )}
+      {process && (
+        <Button
+          onPress={handlePress}
+          textColor={isLiked ? "white" : "#3DBECB"}
+          style={styles.button}
+          bgcolor={isLiked ? "#3DBECB" : "white"}
+          text={"Loading"}
+          fontfamily={"alexandriaLight"}
+          fontsize={13}
+        />
+      )}
       <Text style={styles.price}>{itemPrice}</Text>
     </TouchableOpacity>
   );
