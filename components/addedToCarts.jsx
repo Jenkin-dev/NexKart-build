@@ -1,10 +1,17 @@
-import { StyleSheet, Text } from "react-native";
+import { Alert, StyleSheet, Text } from "react-native";
 import { Image, View } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useCartStore } from "../store/useCartStore";
 import { useState } from "react";
 
-const AddedToCarts = ({ id, source, productname, productprice, qty }) => {
+const AddedToCarts = ({
+  id,
+  source,
+  productname,
+  productprice,
+  qty,
+  noItems,
+}) => {
   //   const [qty, setQty] = useState(1);
 
   const updateQuantity = useCartStore((state) => state.updateQuantity);
@@ -39,7 +46,16 @@ const AddedToCarts = ({ id, source, productname, productprice, qty }) => {
             name="plus-square"
             size={24}
             color="#4C69FF"
-            onPress={() => updateQuantity(id, 1)}
+            onPress={() => {
+              if (qty < noItems) {
+                updateQuantity(id, 1);
+              } else {
+                Alert.alert(
+                  "Invalid Amount",
+                  `Quantity exceeds number of ${productname} remaining: ${noItems}`,
+                );
+              }
+            }}
           />
         </View>
       </View>

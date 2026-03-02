@@ -23,13 +23,13 @@ const Carts = () => {
     return cartItems
       .reduce((total, item) => {
         // 1. Grab the price string (e.g., "USD 160.00")
-        const priceString = item.itemPrice || item.price || "0";
+        const priceString = item.itemPrice;
 
         // 2. Strip out all letters/spaces, leaving only numbers and decimals
         const numericPrice = parseFloat(priceString.replace(/[^0-9.]/g, ""));
 
         // 3. Multiply by quantity and add to the running total
-        return total + numericPrice * (item.qty || 1);
+        return total + numericPrice * item.qty;
       }, 0)
       .toFixed(2); // Keep it to 2 decimal places for currency
   };
@@ -74,6 +74,7 @@ const Carts = () => {
                 productname={item.name}
                 productprice={item.itemPrice}
                 qty={item.qty}
+                noItems={parseInt(item.noItems)}
               />
             ))}
           </View>
