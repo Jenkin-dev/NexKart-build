@@ -21,7 +21,7 @@ const HomeItems = ({ id, name, source, noItems, itemPrice }) => {
   const handleCardPress = () => {
     router.push({
       pathname: "/productDetails",
-      params: { id, name, source, itemPrice, noItems }, // Pass the data!
+      params: { id }, // Pass the data!
     });
   };
 

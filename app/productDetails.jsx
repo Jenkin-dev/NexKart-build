@@ -7,20 +7,72 @@ import {
   TouchableOpacity,
   View,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
 import Button from "../components/button";
+import { useEffect, useState } from "react";
+import { getDoc, doc } from "firebase/firestore";
+import { db } from "../services/firebase";
 import { ImageMap } from "../utils/imageMap";
 
 const ProductDetails = () => {
-  const { width, height } = Dimensions.get("screen");
+  const { height } = Dimensions.get("screen");
   // Grab the data passed from the clicked card
-  const { id, name, itemPrice, source, noItems } = useLocalSearchParams();
+  const { id } = useLocalSearchParams();
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [errorFetch, setErrorFetch] = useState(false);
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const docRef = doc(db, "products", id);
+        const snapshot = await getDoc(docRef);
+
+        if (snapshot.exists()) {
+          setProduct({ id: snapshot.id, ...snapshot.data() });
+        }
+      } catch (error) {
+        setErrorFetch(true);
+        console.log("Error fetching product,:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [id]);
 
   const handleAddToCart = () => {
-    Alert.alert("Success", `${name} added to cart!`);
+    Alert.alert("Success", `${product.name} added to cart!`);
   };
+
+  if (loading) {
+    return (
+      <SafeAreaView
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#bddcf6",
+        }}
+      >
+        <ActivityIndicator size="100" color="#4C69FF" />
+      </SafeAreaView>
+    );
+  }
+
+  if (errorFetch) {
+    return (
+      <SafeAreaView
+        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+      >
+        <Text>Unable to fetch products details</Text>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.safeview}>
@@ -41,10 +93,10 @@ const ProductDetails = () => {
       >
         {/* Product Image Area */}
         <View style={styles.imageContainer}>
-          {source ? (
+          {product.imageKey ? (
             <Image
               style={styles.productImage}
-              source={source}
+              source={ImageMap[product.imageKey]}
               resizeMode="contain"
             />
           ) : null}
@@ -52,12 +104,12 @@ const ProductDetails = () => {
 
         {/* Product Info */}
         <View style={styles.infoContainer}>
-          <Text style={styles.productName}>{name}</Text>
-          <Text style={styles.productPrice}>{itemPrice}</Text>
+          <Text style={styles.productName}>{product.name}</Text>
+          <Text style={styles.productPrice}>{product.itemPrice}</Text>
 
           <View style={styles.statsRow}>
             <View style={styles.statBadge}>
-              <Text style={styles.statText}>{noItems}</Text>
+              <Text style={styles.statText}>{product.noItems}</Text>
             </View>
             <View style={styles.statBadge}>
               <Text style={styles.statText}>⭐️ 4.8 Ratings</Text>
@@ -66,9 +118,9 @@ const ProductDetails = () => {
 
           <Text style={styles.sectionTitle}>Description</Text>
           <Text style={styles.descriptionText}>
-            This is a premium high-quality {name}. Built with industry-leading
-            technology to ensure maximum durability and exceptional performance.
-            Get yours today before stock runs out!
+            This is a premium high-quality {product.name}. Built with
+            industry-leading technology to ensure maximum durability and
+            exceptional performance. Get yours today before stock runs out!
           </Text>
         </View>
       </ScrollView>
