@@ -11,4 +11,5 @@ export const ImageMap = {
   iphonexr: require("../assets/images/iphonexr.png"),
   XIaomMiMix3: require("../assets/images/XIaomMiMix3.png"),
   order2: require("../assets/images/order2.png"),
+  shoes: require("../assets/images/shoes.png"),
 };
