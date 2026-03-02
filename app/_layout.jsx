@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Stack, useRouter, useSegments } from "expo-router";
 import { auth } from "../services/firebase";
 import { onAuthStateChanged } from "firebase/auth";
-import { View, ActivityIndicator } from "react-native";
+import { View, ActivityIndicator, Image } from "react-native";
 
 // Import your stores to trigger data fetching
 import { useCartStore } from "../store/useCartStore";
@@ -79,7 +79,7 @@ const RootLayout = () => {
   if (initializing) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="#4C69FF" />
+        <Image source={"/assets/images/Signup_Loginlogo.png"} />
       </View>
     );
   }

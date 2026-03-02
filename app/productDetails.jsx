@@ -64,6 +64,15 @@ const ProductDetails = () => {
         Alert.alert(
           "Success",
           `${product.name} quanity has been incremented by 1 in your cart!`,
+          [
+            {
+              text: "Go to Carts",
+              onPress: () => router.push("/carts"),
+            },
+            {
+              text: "OK",
+            },
+          ],
         );
       } finally {
         setAdding(false);
