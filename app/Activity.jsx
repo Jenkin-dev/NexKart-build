@@ -19,7 +19,7 @@ import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
 import { ImageMap } from "../utils/imageMap";
 
 const Activity = () => {
-  const [recentOrders, setRecentOrders] = useState([]);
+  const [recentActivities, setRecentActivities] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -27,15 +27,14 @@ const Activity = () => {
       const user = auth.currentUser;
       if (user) {
         try {
-          const ordersRef = collection(db, "users", user.uid, "orders");
-          const q = query(ordersRef, orderBy("createdAt", "desc"));
+          const activitiesRef = collection(db, "users", user.uid, "activities");
+          const q = query(activitiesRef, orderBy("createdAt", "desc"));
           const snapshot = await getDocs(q);
-          const fetchedOrders = snapshot.docs.map((doc) => ({
-            id: doc.id,
+          const fetchedActivities = snapshot.docs.map((doc) => ({
             ...doc.data(),
           }));
 
-          setRecentOrders(fetchedOrders);
+          setRecentActivities(fetchedActivities);
         } catch (error) {
           console.error("An error occured while fetching activity:", "error");
         } finally {
@@ -137,7 +136,7 @@ const Activity = () => {
               color={"#4c69ff"}
               style={{ marginTop: 20 }}
             />
-          ) : recentOrders.length === 0 ? (
+          ) : recentActivities.length === 0 ? (
             <Text
               style={{
                 fontfamily: "alexandriaLight",
@@ -149,9 +148,9 @@ const Activity = () => {
               No recent activity to show
             </Text>
           ) : (
-            recentOrders.map((order) => (
+            recentActivities.map((activity) => (
               <View
-                key={order.id}
+                key={activity.id}
                 style={{
                   marginBottom: 20,
                   borderBottomWidth: 2,
@@ -162,18 +161,18 @@ const Activity = () => {
                   icon={
                     <Image
                       style={{ width: 40, height: 40, resizeMode: "contain" }}
-                      source={getStausIcon(order.status)}
+                      source={getStausIcon(activity.status)}
                     />
                   }
-                  topic={`Order ${order.status.toLowerCase()} (ID: ${order.id})`}
-                  subtext={formatDate(order.createdAt)}
+                  topic={`Order ${activity.status.toLowerCase()} (ID: ${activity.orderID})`}
+                  subtext={formatDate(activity.createdAt)}
                   icon2={
                     <Image
                       style={{ width: 33, height: 42, resizeMode: "contain" }}
                       // Grab the image of the FIRST item in that specific order using your dictionary!
                       source={
-                        order.items && order.items[0]
-                          ? ImageMap[order.items[0].imageKey]
+                        activity.items && activity.items[0]
+                          ? ImageMap[activity.items[0].imageKey]
                           : null
                       }
                     />

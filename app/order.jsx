@@ -25,6 +25,7 @@ import {
   orderBy,
   doc,
   updateDoc,
+  setDoc,
 } from "firebase/firestore";
 
 const Orders = () => {
@@ -64,7 +65,7 @@ const Orders = () => {
     fetchUserOrders();
   }, []);
 
-  const handleDelivered = async (orderID) => {
+  const handleDelivered = async (order) => {
     const user = auth.currentUser;
     if (!user) {
       Alert.alert("Error", "You must be logged in to confirm delivery.");
@@ -72,19 +73,28 @@ const Orders = () => {
     }
     try {
       setDelivering(true);
-      const orderRef = doc(db, "users", user.uid, "orders", orderID);
+      const orderRef = doc(db, "users", user.uid, "orders", order.id);
 
       await updateDoc(orderRef, { status: "Delivered" });
 
+      const activityID = `ACT-${Date.now()}`;
+      await setDoc(doc(db, "users", user.uid, "activities", activityID), {
+        id: activityID,
+        orderID: order.id,
+        status: "Delivered",
+        items: order.items,
+        createdAt: new Date().toISOString(),
+      });
+
       setOrders((prevOrders) =>
-        prevOrders.map((order) =>
-          order.id === orderID ? { ...order, status: "Delivered" } : order,
+        prevOrders.map((orderr) =>
+          orderr.id === order.id ? { ...orderr, status: "Delivered" } : orderr,
         ),
       );
 
       Alert.alert(
         "Success",
-        "Thanks for shopping with us. Look forward to handling more of your deliveries",
+        "Thanks for shopping with us. Looking forward to handling more of your deliveries",
       );
     } catch (error) {
       console.error("Error updating order:", error);
@@ -112,7 +122,7 @@ const Orders = () => {
               fontfamily={"alexandriaLight"}
             /> */}
             <Button
-              onPress={() => handleDelivered(order.id)}
+              onPress={() => handleDelivered(order)}
               style={styles.orderbutton}
               bgcolor={"#bddcf6"}
               textColor={"#4C69FF"}

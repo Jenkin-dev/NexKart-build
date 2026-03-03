@@ -69,6 +69,15 @@ const Carts = () => {
 
       await setDoc(doc(db, "users", user.uid, "orders", orderID), orderData);
 
+      const activityID = `ACT-${Date.now()}`;
+      await setDoc(doc(db, "users", user.uid, "activities", activityID), {
+        id: activityID,
+        orderID: orderID,
+        status: "Paid",
+        items: formattedItems,
+        createdAt: new Date().toISOString(),
+      });
+
       await clearCart();
       Alert.alert(
         "Payment Successful!",
