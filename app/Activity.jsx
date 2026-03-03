@@ -50,6 +50,7 @@ const Activity = () => {
             activity={"Carts"}
           />
           <Activities
+            onPress={() => router.push("/order")}
             activityImage={require("../assets/images/warehouse.png")}
             activity={"Delivered"}
           />
@@ -62,87 +63,18 @@ const Activity = () => {
           textColor={"#4C69FF"}
           style={styles.button}
         />
-        {/* <View style={styles.boundaryLine} /> */}
-        <View style={styles.importaant}>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              marginVertical: 20,
-              alignItems: "baseline",
-              display: cleared ? "none" : undefined,
-            }}
-          >
-            <Text style={{ fontFamily: "alexandriaMedium", fontSize: 23 }}>
-              Important
-            </Text>
-            <TouchableOpacity onPress={() => setCleared(true)}>
-              <Text
-                style={{
-                  fontFamily: "alexandriaRegular",
-                  fontSize: 18,
-
-                  color: "#FF4C96",
-                }}
-              >
-                Clear
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <View
-            style={[
-              styles.activityinfo,
-              { display: cleared ? "none" : undefined },
-            ]}
-          >
-            <Activityinfo
-              icon={
-                <Image
-                  style={{ width: 24, height: 24 }}
-                  source={require("../assets/images/xiaomi.png")}
-                />
-              }
-              topic={"2 unread messages from Xiaomi"}
-              subtext={"13 Dec 2018, 09:38"}
-              // icon2={<Image source={null} />}
-            />
-
-            <Activityinfo
-              icon={<AntDesign name="account-book" size={24} color="#4C69FF" />}
-              topic={"Your voucher is about to expire"}
-              subtext={"Don't miss out! Use you voucher now."}
-            />
-          </View>
-        </View>
 
         <View style={styles.orderUpdates}>
-          <Text style={{ fontFamily: "alexandriaMedium", fontSize: 23 }}>
-            Order Updates
-          </Text>
-          <View
+          <Text
             style={{
-              marginVertical: 20,
-              borderBottomWidth: 2,
-              borderBottomColor: "#E5E5E5",
+              fontFamily: "alexandriaMedium",
+              fontSize: 23,
+              marginBottom: 15,
             }}
           >
-            <Activityinfo
-              icon={
-                <Image
-                  style={{ width: 40, height: 40 }}
-                  source={require("../assets/images/shipped.png")}
-                />
-              }
-              topic={"Parcel shipped from China"}
-              subtext={"12 Dec 2018, 09:38"}
-              icon2={
-                <Image
-                  style={{ width: 42, height: 42 }}
-                  source={require("../assets/images/watchorder.png")}
-                />
-              }
-            />
-          </View>
+            Order Updates
+          </Text>
+
           <View
             style={{
               marginBottom: 20,
@@ -167,30 +99,7 @@ const Activity = () => {
               }
             />
           </View>
-          <View
-            style={{
-              marginBottom: 20,
-              borderBottomWidth: 2,
-              borderBottomColor: "#E5E5E5",
-            }}
-          >
-            <Activityinfo
-              icon={
-                <Image
-                  style={{ width: 40, height: 40 }}
-                  source={require("../assets/images/shipped.png")}
-                />
-              }
-              topic={"Parcel shipped from Maldives"}
-              subtext={"17 Oct 2018, 09:56"}
-              icon2={
-                <Image
-                  style={{ width: 42, height: 42 }}
-                  source={require("../assets/images/watchorder.png")}
-                />
-              }
-            />
-          </View>
+
           <View
             style={{
               marginBottom: 20,

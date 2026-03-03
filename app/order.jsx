@@ -104,19 +104,19 @@ const Orders = () => {
       case "Paid":
         return (
           <>
-            <Button
+            {/* <Button
               style={styles.orderbutton}
               bgcolor={"#bddcf6"}
               textColor={"#4C69FF"}
               text={"Order Details"}
               fontfamily={"alexandriaLight"}
-            />
+            /> */}
             <Button
               onPress={() => handleDelivered(order.id)}
               style={styles.orderbutton}
               bgcolor={"#bddcf6"}
               textColor={"#4C69FF"}
-              text={delivering ? "Confirming..." : "Confirm Delivery..."}
+              text={delivering ? "Confirming..." : "Confirm Delivery"}
               fontfamily={"alexandriaLight"}
             />
           </>
@@ -124,13 +124,13 @@ const Orders = () => {
       case "Shipped":
         return (
           <>
-            <Button
+            {/* <Button
               style={styles.orderbutton}
               bgcolor={"#bddcf6"}
               textColor={"#4C69FF"}
               text={"Order Details"}
               fontfamily={"alexandriaLight"}
-            />
+            /> */}
             <Button
               style={styles.orderbutton}
               bgcolor={"#4C69FF"}
@@ -143,13 +143,13 @@ const Orders = () => {
       case "Delivered":
         return (
           <>
-            <Button
+            {/* <Button
               style={styles.orderbutton}
               bgcolor={"#bddcf6"}
               textColor={"#4C69FF"}
               text={"Order Details"}
               fontfamily={"alexandriaLight"}
-            />
+            /> */}
             <Button
               style={styles.orderbutton}
               onPress={() =>
@@ -168,13 +168,13 @@ const Orders = () => {
       case "Returned":
         return (
           <>
-            <Button
+            {/* <Button
               style={styles.orderbutton}
               bgcolor={"#bddcf6"}
               textColor={"#4C69FF"}
               text={"Contact Support"}
               fontfamily={"alexandriaLight"}
-            />
+            /> */}
             <Button
               style={styles.orderbutton}
               bgcolor={"#4C69FF"}
@@ -318,14 +318,14 @@ const styles = StyleSheet.create({
   pageHead: { fontFamily: "alexandriaBold", paddingBottom: 10, fontSize: 25 },
   category: { gap: 20, marginBottom: 30 },
   icons: { marginBottom: 20 },
-  orderbuttons: { flexDirection: "row", gap: "5%" },
+  // orderbuttons: { flexDirection: "row", gap: "5%" },
   orderitems: {
     paddingBottom: 30,
     marginBottom: 20,
     borderBottomColor: "grey",
     borderBottomWidth: 0.5,
   },
-  orderbutton: { width: "47.5%", height: 40 },
+  orderbutton: { alignSelf: "flex-end", width: "47.5%", height: 40 },
   safeview: {
     paddingHorizontal: 20,
     paddingVertical: 30,

@@ -49,7 +49,7 @@ const Carts = () => {
     setIsCheckingOut(true);
 
     try {
-      const orderID = `ORD-${nanoid(6).toUpperCase()}`;
+      const orderID = `ORD-NXK${nanoid(6).toUpperCase()}`;
 
       const formattedItems = cartItems.map((item) => ({
         imageKey: item.imageKey,
