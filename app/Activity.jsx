@@ -42,6 +42,7 @@ const Activity = () => {
           <Activities
             activityImage={require("../assets/images/shipped.png")}
             activity={"Shipped"}
+            onPress={() => router.push("/order")}
           />
           <Activities
             onPress={() => router.push("./carts")}

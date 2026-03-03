@@ -68,5 +68,11 @@ export const useCartStore = create((set, get) => ({
     await setDoc(userRef, { cart: updatedCart }, { merge: true });
   },
 
-  clearCart: () => set({ cart: [] }),
+  clearCart: async () => {
+    const user = auth.currentUser;
+    if (user) {
+      await setDoc(doc(db, "users", user.uid), { cart: [] }, { merge: true });
+    }
+    set({ cart: [] });
+  },
 }));

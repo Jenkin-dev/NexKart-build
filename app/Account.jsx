@@ -11,7 +11,6 @@ import {
 import SafeView from "../components/safe-view";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-// import { useSignupStore } from "../store/useSignupStore";
 import { useState } from "react";
 import { useUsername } from "../store/useUsername";
 import { useEffect } from "react";
@@ -22,9 +21,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Account = () => {
   const { zusUsername } = useUsername();
-  // const phone = useSignupStore((s) => s.phone);
-  // const [phone, setPhone] = useState();
-  // const [storedUser, setStoredUser] = useState("");
+
   const [username, setUsername] = useState("Loading...");
   const [userphone, setUserphone] = useState("+234...");
   const [useremail, setUseremail] = useState("email.domain.com");
@@ -37,12 +34,10 @@ const Account = () => {
       setUseremail(user?.email);
 
       if (user) {
-        // 1. Reference the specific document using the User's UID
         const docRef = doc(db, "users", user.uid);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-          // 2. Set the 'username' field from your Firestore data to state
           setUsername(docSnap.data().username);
           setUserphone(docSnap.data().phoneNumber);
         } else {
@@ -55,8 +50,6 @@ const Account = () => {
   }, []);
 
   return (
-    // <SafeView style={{ paddingHorizontal: 20, marginTop: 20 }}>
-
     <SafeAreaView style={styles.safeview}>
       <ImageBackground
         source={require("../assets/images/dpimage.png")}

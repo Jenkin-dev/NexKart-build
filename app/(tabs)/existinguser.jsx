@@ -60,7 +60,6 @@ const ExistingUser = () => {
       const sendPasswordReset = async () => {
         try {
           setSendingMail(true);
-          // 1. Get the email that was saved during signup or previous login
 
           if (!emailAddress) {
             Alert.alert(
@@ -70,7 +69,6 @@ const ExistingUser = () => {
             return;
           }
 
-          // 2. Trigger the Firebase reset email
           await sendPasswordResetEmail(auth, emailAddress);
 
           Alert.alert(

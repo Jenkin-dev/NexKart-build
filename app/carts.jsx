@@ -12,31 +12,81 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import AddedToCarts from "../components/addedToCarts";
 import { ImageMap } from "../utils/imageMap";
 import { useCartStore } from "../store/useCartStore";
-import Button from "../components/button"; // 👈 Ensure you import your Button component
+import Button from "../components/button";
+import { auth, db } from "../services/firebase";
+import { doc, setDoc } from "firebase/firestore";
+import { useState } from "react";
+import { nanoid } from "nanoid/non-secure";
 
 const Carts = () => {
   const cartItems = useCartStore((state) => state.cart);
-  const isEmpty = cartItems.length === 0;
+  const clearCart = useCartStore((state) => state.clearCart);
 
-  // 🧠 The Calculation Engine
+  const isEmpty = cartItems.length === 0;
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+
   const calculateTotal = () => {
     return cartItems
       .reduce((total, item) => {
-        // 1. Grab the price string (e.g., "USD 160.00")
         const priceString = item.itemPrice;
 
-        // 2. Strip out all letters/spaces, leaving only numbers and decimals
         const numericPrice = parseFloat(priceString.replace(/[^0-9.]/g, ""));
 
-        // 3. Multiply by quantity and add to the running total
         return total + numericPrice * item.qty;
       }, 0)
-      .toFixed(2); // Keep it to 2 decimal places for currency
+      .toFixed(2); // 2 decimal places for currency
+  };
+
+  const handleCheckout = async () => {
+    const user = auth.currentUser;
+    if (!user) {
+      Alert.alert(
+        "Error",
+        "You must be logged in before you can be permitted to make transactions",
+      );
+    }
+
+    setIsCheckingOut(true);
+
+    try {
+      const orderID = `ORD-${nanoid(6).toUpperCase()}`;
+
+      const formattedItems = cartItems.map((item) => ({
+        imageKey: item.imageKey,
+        name: item.name,
+        price: item.itemPrice,
+        color: "Standard",
+        qty: `x ${item.qty}`,
+      }));
+
+      const orderData = {
+        id: orderID,
+        status: "Paid",
+        total: calculateTotal(),
+        items: formattedItems,
+        createdAt: new Date().toISOString(),
+      };
+
+      await setDoc(doc(db, "users", user.uid, "orders", orderID), orderData);
+
+      await clearCart();
+      Alert.alert(
+        "Payment Successful!",
+        `Your order (${orderID}) has been placed`,
+      );
+    } catch (error) {
+      console.error(`Checkout Error: ${error}`);
+      Alert.alert(
+        "Checkout Failed",
+        "Something went wrong while processing your payment",
+      );
+    } finally {
+      setIsCheckingOut(false);
+    }
   };
 
   return (
     <SafeAreaView style={styles.safeview}>
-      {/* Header */}
       <View style={styles.icons}>
         <TouchableOpacity onPress={() => router.back()}>
           <Image
@@ -95,7 +145,7 @@ const Carts = () => {
                 [
                   {
                     text: "Yes, Proceed",
-                    // onPress: () => sendPasswordReset(),
+                    onPress: () => handleCheckout(),
                   },
                   {
                     text: "Confirm Cart",
@@ -103,11 +153,12 @@ const Carts = () => {
                 ],
               )
             }
-            text="Checkout"
-            bgcolor="#4C69FF"
+            text={isCheckingOut ? "Processing..." : "Checkout"}
+            bgcolor={isCheckingOut ? "#888" : "#4C69FF"}
             textColor="white"
             fontfamily="alexandriaBold"
             style={styles.checkoutButton}
+            disabled={isCheckingOut}
           />
         </View>
       )}
@@ -132,7 +183,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 
-  // Checkout Bar Styles
   checkoutBar: {
     position: "absolute",
     bottom: 0,

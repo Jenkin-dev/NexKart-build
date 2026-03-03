@@ -5,7 +5,6 @@ import { auth } from "../services/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { View, ActivityIndicator, Image } from "react-native";
 
-// Import your stores to trigger data fetching
 import { useCartStore } from "../store/useCartStore";
 import { useWishlistStore } from "../store/wishliststore";
 
@@ -35,19 +34,17 @@ const RootLayout = () => {
   const router = useRouter();
   const segments = useSegments();
 
-  // Listen for auth state changes AND fetch user data
   useEffect(() => {
     const subscriber = onAuthStateChanged(auth, async (user) => {
       setUser(user);
 
       if (user) {
-        // User logged in: Load their Cart and Wishlist from Firestore
         await useCartStore.getState().loadCart();
         if (useWishlistStore.getState().loadWishlist) {
           await useWishlistStore.getState().loadWishlist();
         }
       } else {
-        // User logged out: Wipe local memory
+        // Clear user details upon logging out
         useCartStore.getState().clearCart();
         if (useWishlistStore.getState().clearWishlist) {
           useWishlistStore.getState().clearWishlist();
@@ -72,7 +69,7 @@ const RootLayout = () => {
     if (!user && !isAuthScreen && segments[0] !== "OTP") {
       router.replace("/(tabs)/Login");
     } else if (user && isAuthScreen) {
-      router.replace("/Home");
+      router.replace("/Home"); //this would automatically navigate to the home screen once user logs in from any of the specified screen
     }
   }, [user, segments, initializing]);
 

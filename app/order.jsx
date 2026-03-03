@@ -6,122 +6,56 @@ import {
   Text,
   TouchableOpacity,
   View,
+  ScrollView,
+  ActivityIndicator,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useState, useEffect } from "react";
+
 import Button from "../components/button";
-import { useState } from "react";
-import { ScrollView } from "react-native";
 import OrderItems from "../components/OrderItems";
+import { ImageMap } from "../utils/imageMap";
+
+import { auth, db } from "../services/firebase";
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
 
 const Orders = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const categories = ["All", "Paid", "Shipped", "Delivered", "Returned"];
   const { width } = Dimensions.get("screen");
 
-  const orders = [
-    {
-      id: "001",
-      status: "Paid",
-      items: [
-        {
-          source: require("../assets/images/XIaomMiMix3.png"),
-          name: "Xiaomi Mi Mix 3",
-          price: "USD 160",
-          color: "Black",
-          qty: "x 1",
-        },
-        {
-          source: require("../assets/images/mouse.png"),
-          name: "Logitech G703 Wireless Gaming Mouse",
-          price: "USD 100",
-          color: "Black",
-          qty: "x 1",
-        },
-      ],
-    },
-    {
-      id: "002",
-      status: "Shipped",
-      items: [
-        {
-          source: require("../assets/images/smartwatch.png"),
-          name: "FitBit Versa",
-          price: "USD 280",
-          color: "Black",
-          qty: "x 1",
-        },
-      ],
-    },
-    {
-      id: "003",
-      status: "Paid",
-      items: [
-        {
-          source: require("../assets/images/Pixel3.png"),
-          name: "Pixel 3",
-          price: "USD 1200",
-          color: "Clearly White",
-          qty: "x 1",
-        },
-      ],
-    },
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    {
-      id: "004",
-      status: "Shipped",
-      items: [
-        {
-          source: require("../assets/images/xiaomia2lute.png"),
-          name: "Xiaomi A2 Lite",
-          price: "USD 100",
-          color: "Black",
-          qty: "x 1",
-        },
-      ],
-    },
+  useEffect(() => {
+    const fetchUserOrders = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        try {
+          const ordersRef = collection(db, "users", user.uid, "orders");
+          const q = query(ordersRef, orderBy("createdAt", "desc"));
+          const snapshot = await getDocs(q);
 
-    {
-      id: "005",
-      status: "Delivered",
-      items: [
-        {
-          source: require("../assets/images/order2.png"),
-          name: "Google Home Mini",
-          price: "40",
-          color: "Charcoal",
-          qty: "x 1",
-        },
-        {
-          source: require("../assets/images/cardimage3.png"),
-          name: "Chrome Home Max",
-          price: "USD 80",
-          color: "Charcoal",
-          qty: "x 1",
-        },
-      ],
-    },
+          const fetchedOrders = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
 
-    {
-      id: "006",
-      status: "Returned",
-      items: [
-        {
-          source: require("../assets/images/amazonecho.png"),
-          name: "Amazon Echo",
-          price: "USD 160",
-          color: "Slate Black",
-          qty: "x 1",
-        },
-        {
-          source: require("../assets/images/iphonexr.png"),
-          name: "iPhone XR",
-          price: "USD 680",
-          color: "Coral Blue",
-          qty: "x 1",
-        },
-      ],
-    },
-  ];
+          setOrders(fetchedOrders);
+        } catch (error) {
+          console.error("Error fetching orders:", error);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setLoading(false);
+        Alert.alert("Error", "Failed to fetch orders");
+      }
+    };
+
+    fetchUserOrders();
+  }, []);
 
   const filteredOrders =
     selectedCategory === "All"
@@ -149,7 +83,6 @@ const Orders = () => {
             />
           </>
         );
-
       case "Shipped":
         return (
           <>
@@ -169,7 +102,6 @@ const Orders = () => {
             />
           </>
         );
-
       case "Delivered":
         return (
           <>
@@ -189,7 +121,6 @@ const Orders = () => {
             />
           </>
         );
-
       case "Returned":
         return (
           <>
@@ -209,7 +140,6 @@ const Orders = () => {
             />
           </>
         );
-
       default:
         return null;
     }
@@ -228,6 +158,7 @@ const Orders = () => {
         </View>
         <Text style={styles.pageHead}>My Orders</Text>
       </View>
+
       <ScrollView
         horizontal
         contentContainerStyle={styles.category}
@@ -251,34 +182,89 @@ const Orders = () => {
           />
         ))}
       </ScrollView>
+
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.orders}>
-          {filteredOrders.map((order) => (
-            <View key={order.id} style={styles.orderitems}>
-              <Text style={{ fontFamily: "alexandriaRegular", fontSize: 22 }}>
-                Order ID: {order.id}
-              </Text>
+        {loading ? (
+          <ActivityIndicator
+            size="large"
+            color="#4C69FF"
+            style={{ marginTop: 50 }}
+          />
+        ) : orders.length === 0 ? (
+          <Text
+            style={{
+              textAlign: "center",
+              marginTop: 50,
+              fontFamily: "alexandriaRegular",
+              color: "grey",
+            }}
+          >
+            You haven't placed any orders yet.
+          </Text>
+        ) : filteredOrders.length === 0 ? (
+          <Text
+            style={{
+              textAlign: "center",
+              marginTop: 50,
+              fontFamily: "alexandriaRegular",
+              color: "grey",
+            }}
+          >
+            No orders found for this category.
+          </Text>
+        ) : (
+          <View style={styles.orders}>
+            {filteredOrders.map((order) => (
+              <View key={order.id} style={styles.orderitems}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: 10,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontFamily: "alexandriaBold",
+                      fontSize: 18,
+                      color: "#333",
+                    }}
+                  >
+                    ID: {order.id}
+                  </Text>
+                  <Text
+                    style={{
+                      fontFamily: "alexandriaMedium",
+                      fontSize: 16,
+                      color: "#4C69FF",
+                    }}
+                  >
+                    {order.total && `USD ${order.total}`}
+                  </Text>
+                </View>
 
-              {order.items.map((item, index) => (
-                <OrderItems
-                  key={index}
-                  source={item.source}
-                  itemname={item.name}
-                  itemprice={item.price}
-                  itemcolor={item.color}
-                  itemqty={item.qty}
-                  itemstatus={order.status}
-                />
-              ))}
+                {order.items.map((item, index) => (
+                  <OrderItems
+                    key={index}
+                    source={ImageMap[item.imageKey]}
+                    itemname={item.name}
+                    itemprice={item.price}
+                    itemcolor={item.color}
+                    itemqty={item.qty}
+                    itemstatus={order.status}
+                  />
+                ))}
 
-              <View style={styles.orderbuttons}>
                 <View style={styles.orderbuttons}>
-                  {renderOrderButtons(order.status)}
+                  <View style={styles.orderbuttons}>
+                    {renderOrderButtons(order.status)}
+                  </View>
                 </View>
               </View>
-            </View>
-          ))}
-        </View>
+            ))}
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -286,18 +272,9 @@ const Orders = () => {
 
 const styles = StyleSheet.create({
   pageHead: { fontFamily: "alexandriaBold", paddingBottom: 10, fontSize: 25 },
-  category: {
-    // flexDirection: "row",
-    gap: 20,
-    marginBottom: 30,
-  },
-  icons: {
-    marginBottom: 20,
-  },
-  orderbuttons: {
-    flexDirection: "row",
-    gap: "5%",
-  },
+  category: { gap: 20, marginBottom: 30 },
+  icons: { marginBottom: 20 },
+  orderbuttons: { flexDirection: "row", gap: "5%" },
   orderitems: {
     paddingBottom: 30,
     marginBottom: 20,
@@ -311,13 +288,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#bddcf6",
   },
-
-  categoryselector: {
-    // width: 78,
-    paddingHorizontal: 30,
-    height: 32,
-    borderRadius: 16,
-  },
+  categoryselector: { paddingHorizontal: 30, height: 32, borderRadius: 16 },
 });
 
 export default Orders;

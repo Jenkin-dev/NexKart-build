@@ -10,7 +10,6 @@ import {
   Dimensions,
   KeyboardAvoidingView,
 } from "react-native";
-// import Ionicons from "@expo/vector-icons/Ionicons";
 import { router } from "expo-router";
 import TopTab from "../../components/toptab";
 import Input from "../../components/input";
@@ -21,7 +20,6 @@ import Socialmedia from "../../components/socialmedia";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
-import { useUsername } from "../../store/useUsername";
 
 const Signup = () => {
   const [password, setPassword] = useState("");
@@ -29,7 +27,6 @@ const Signup = () => {
   const { width } = Dimensions.get("screen");
   const { height } = Dimensions.get("screen");
   const passwordLength = password.length;
-  // const { zusUsername } = useUsername();
   const [loading, setLoading] = useState(false);
 
   const [email, setEmail] = useState("");
@@ -160,7 +157,7 @@ const Signup = () => {
               console.log("Signup error:", error);
               Alert.alert("Error", "Something went wrong");
             } finally {
-              setLoading(false); // ✅ ALWAYS resets loading
+              setLoading(false);
             }
           }}
         />

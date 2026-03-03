@@ -27,10 +27,8 @@ const Home = () => {
   const [searching, setSearching] = useState(false);
   const { height } = Dimensions.get("screen");
   const [homeitems, setHomeitems] = useState([]);
-  // Zustand store methods
   const loadWishlist = useWishlistStore((state) => state.loadWishlist);
 
-  // Load wishlist for logged-in user
   useEffect(() => {
     const loadProducts = async () => {
       try {

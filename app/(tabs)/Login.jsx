@@ -17,7 +17,6 @@ import Socialmedia from "../../components/socialmedia";
 import TopTab from "../../components/toptab";
 
 import Passwordinput from "../../components/passwordInput";
-// import { useSignupStore } from "../../store/useSignupStore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
@@ -42,7 +41,6 @@ const Login = () => {
   const handleForgotPassword = async () => {
     try {
       setSendingMail(true);
-      // 1. Get the email that was saved during signup or previous login
       const emailAddress = await AsyncStorage.getItem("savedEmail");
 
       if (!emailAddress) {
@@ -50,7 +48,6 @@ const Login = () => {
         return;
       }
 
-      // 2. Trigger the Firebase reset email
       await sendPasswordResetEmail(auth, emailAddress);
 
       Alert.alert(
@@ -195,7 +192,6 @@ const Login = () => {
                 if (password.length >= 6) {
                   setLoading(true);
                   try {
-                    // const savedUsername = await AsyncStorage.getItem("User");
                     const emailAddress =
                       await AsyncStorage.getItem("savedEmail");
                     const savedUsername =
@@ -206,15 +202,11 @@ const Login = () => {
                       savedUsername,
                     );
 
-                    // This tells Firebase to sign in
                     await signInWithEmailAndPassword(
                       auth,
                       emailAddress,
                       password,
                     );
-
-                    // Note: You don't need router.push here because your _layout.jsx
-                    // will automatically detect the 'user' and move you to /Home.
                   } catch (error) {
                     console.error(error);
                     Alert.alert("Login Failed", error.message);
