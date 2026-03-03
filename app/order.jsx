@@ -18,11 +18,18 @@ import OrderItems from "../components/OrderItems";
 import { ImageMap } from "../utils/imageMap";
 
 import { auth, db } from "../services/firebase";
-import { collection, getDocs, query, orderBy } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  query,
+  orderBy,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
 
 const Orders = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const categories = ["All", "Paid", "Shipped", "Delivered", "Returned"];
+  const categories = ["All", "Paid", "Delivered", "Shipped", "Returned"];
   const { width } = Dimensions.get("screen");
 
   const [orders, setOrders] = useState([]);
@@ -57,13 +64,40 @@ const Orders = () => {
     fetchUserOrders();
   }, []);
 
+  const handleDelivered = async (orderID) => {
+    const user = auth.currentUser;
+    if (!user) {
+      Alert.alert("Error", "You must be logged in to confirm delivery.");
+      return;
+    }
+    try {
+      const orderRef = doc(db, "users", user.uid, "orders", orderID);
+
+      await updateDoc(orderRef, { status: "Delivered" });
+
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order.id === orderID ? { ...order, status: "Delivered" } : order,
+        ),
+      );
+
+      Alert.alert(
+        "Success",
+        "Thanks for shopping with us. Look forward to handling more of your deliveries",
+      );
+    } catch (error) {
+      console.error("Error updating order:", error);
+      Alert.alert("Error", "Delivery not confirmed");
+    }
+  };
+
   const filteredOrders =
     selectedCategory === "All"
       ? orders
       : orders.filter((order) => order.status === selectedCategory);
 
-  const renderOrderButtons = (status) => {
-    switch (status) {
+  const renderOrderButtons = (order) => {
+    switch (order.status) {
       case "Paid":
         return (
           <>
@@ -75,10 +109,11 @@ const Orders = () => {
               fontfamily={"alexandriaLight"}
             />
             <Button
+              onPress={() => handleDelivered(order.id)}
               style={styles.orderbutton}
               bgcolor={"#bddcf6"}
               textColor={"#4C69FF"}
-              text={"Messages"}
+              text={"Confirm Delivery..."}
               fontfamily={"alexandriaLight"}
             />
           </>
@@ -258,7 +293,7 @@ const Orders = () => {
 
                 <View style={styles.orderbuttons}>
                   <View style={styles.orderbuttons}>
-                    {renderOrderButtons(order.status)}
+                    {renderOrderButtons(order)}
                   </View>
                 </View>
               </View>
