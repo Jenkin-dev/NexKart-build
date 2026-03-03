@@ -11,6 +11,7 @@ export default function Index() {
         onPress={() => router.push("/Onboarding1")}
         source={require("../assets/images/Signup_Loginlogo.png")}
       />
+      <Text>CLick the image to proceed</Text>
     </SafeAreaView>
   );
 }

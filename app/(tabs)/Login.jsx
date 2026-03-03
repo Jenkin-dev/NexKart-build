@@ -225,7 +225,7 @@ const Login = () => {
               <Text style={styles.forgotPassword}>
                 {sendingmail
                   ? "Sending password reset email"
-                  : "Forgot Password"}
+                  : "Forgot Password?"}
               </Text>
             </TouchableOpacity>
           </View>

@@ -1,4 +1,3 @@
-import SafeView from "../components/safe-view";
 import {
   View,
   TouchableOpacity,
@@ -7,17 +6,74 @@ import {
   Text,
   ScrollView,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 import { router } from "expo-router";
 import Activities from "../components/Activities";
 import Button from "../components/button";
 import Activityinfo from "../components/Activityinfo";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { auth, db } from "../services/firebase";
+import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
+import { ImageMap } from "../utils/imageMap";
 
 const Activity = () => {
-  const [cleared, setCleared] = useState(false);
+  const [recentOrders, setRecentOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRecentActivity = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        try {
+          const ordersRef = collection(db, "users", user.uid, "orders");
+          const q = query(ordersRef, orderBy("createdAt", "desc"));
+          const snapshot = await getDocs(q);
+          const fetchedOrders = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+
+          setRecentOrders(fetchedOrders);
+        } catch (error) {
+          console.error("An error occured while fetching activity:", "error");
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setLoading(false);
+      }
+    };
+
+    fetchRecentActivity();
+  }, []);
+
+  const formatDate = (isoString) => {
+    if (!isoString) return "Just now";
+    const date = new Date(isoString);
+    return date.toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  const getStausIcon = (status) => {
+    switch (status) {
+      case "Delivered":
+        return require("../assets/images/warehouse.png");
+      case "Shipped":
+        return require("../assets/images/intransit.png");
+      case "Returned":
+        return require("../assets/images/cancel.png");
+      default:
+        return require("../assets/images/order.png");
+    }
+  };
+
   return (
     <SafeAreaView style={styles.safeview}>
       <View>
@@ -31,101 +87,103 @@ const Activity = () => {
         </View>
       </View>
       <Text style={styles.pageHead}>Activity</Text>
-      <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
-        <View style={styles.activity}>
-          <Activities
-            onPress={() => router.push("./wishlist")}
-            activityImage={require("../assets/images/order.png")}
-            activity={"Wishlist"}
-          />
 
-          <Activities
-            activityImage={require("../assets/images/shipped.png")}
-            activity={"Shipped"}
-            onPress={() => router.push("/order")}
-          />
-          <Activities
-            onPress={() => router.push("./carts")}
-            activityImage={require("../assets/images/intransit.png")}
-            activity={"Carts"}
-          />
-          <Activities
-            onPress={() => router.push("/order")}
-            activityImage={require("../assets/images/warehouse.png")}
-            activity={"Delivered"}
-          />
-        </View>
-        <Button
-          onPress={() => router.push("./order")}
-          text={"View my orders"}
-          fontfamily={"alexandriaLight"}
-          bgcolor={"#bddcf6"}
-          textColor={"#4C69FF"}
-          style={styles.button}
+      <View style={styles.activity}>
+        <Activities
+          onPress={() => router.push("./wishlist")}
+          activityImage={require("../assets/images/order.png")}
+          activity={"WishList"}
         />
 
-        <View style={styles.orderUpdates}>
-          <Text
-            style={{
-              fontFamily: "alexandriaMedium",
-              fontSize: 23,
-              marginBottom: 15,
-            }}
-          >
-            Order Updates
-          </Text>
+        <Activities
+          activityImage={require("../assets/images/shipped.png")}
+          activity={"Shipped"}
+          onPress={() => router.push("/order")}
+        />
+        <Activities
+          onPress={() => router.push("./carts")}
+          activityImage={require("../assets/images/intransit.png")}
+          activity={"Carts"}
+        />
+        <Activities
+          onPress={() => router.push("/order")}
+          activityImage={require("../assets/images/warehouse.png")}
+          activity={"Delivered"}
+        />
+      </View>
+      <Button
+        onPress={() => router.push("./order")}
+        text={"View my orders"}
+        fontfamily={"alexandriaLight"}
+        bgcolor={"#bddcf6"}
+        textColor={"#4C69FF"}
+        style={styles.button}
+      />
 
-          <View
-            style={{
-              marginBottom: 20,
-              borderBottomWidth: 2,
-              borderBottomColor: "#E5E5E5",
-            }}
-          >
-            <Activityinfo
-              icon={
-                <Image
-                  style={{ width: 40, height: 40 }}
-                  source={require("../assets/images/warehouse.png")}
-                />
-              }
-              topic={"Order delivered to 22 Baker Street"}
-              subtext={"12 Dec 2018, 09:38"}
-              icon2={
-                <Image
-                  style={{ width: 33, height: 42 }}
-                  source={require("../assets/images/order2.png")}
-                />
-              }
+      <View style={styles.orderUpdates}>
+        <Text
+          style={{
+            fontFamily: "alexandriaMedium",
+            fontSize: 23,
+            marginBottom: 15,
+          }}
+        >
+          Order Updates
+        </Text>
+        <ScrollView showsVerticalScrollIndicator={false} style={{}}>
+          {loading ? (
+            <ActivityIndicator
+              size={"large"}
+              color={"#4c69ff"}
+              style={{ marginTop: 20 }}
             />
-          </View>
-
-          <View
-            style={{
-              marginBottom: 20,
-              borderBottomWidth: 2,
-              borderBottomColor: "#E5E5E5",
-            }}
-          >
-            <Activityinfo
-              icon={
-                <Image
-                  style={{ width: 40, height: 40 }}
-                  source={require("../assets/images/warehouse.png")}
+          ) : recentOrders.length === 0 ? (
+            <Text
+              style={{
+                fontfamily: "alexandriaLight",
+                color: "grey",
+                textAlign: "center",
+                marginTop: 20,
+              }}
+            >
+              No recent activity to show
+            </Text>
+          ) : (
+            recentOrders.map((order) => (
+              <View
+                key={order.id}
+                style={{
+                  marginBottom: 20,
+                  borderBottomWidth: 2,
+                  borderBottomColor: "#efefef",
+                }}
+              >
+                <Activityinfo
+                  icon={
+                    <Image
+                      style={{ width: 40, height: 40, resizeMode: "contain" }}
+                      source={getStausIcon(order.status)}
+                    />
+                  }
+                  topic={`Order ${order.status.toLowerCase()} (ID: ${order.id})`}
+                  subtext={formatDate(order.createdAt)}
+                  icon2={
+                    <Image
+                      style={{ width: 33, height: 42, resizeMode: "contain" }}
+                      // Grab the image of the FIRST item in that specific order using your dictionary!
+                      source={
+                        order.items && order.items[0]
+                          ? ImageMap[order.items[0].imageKey]
+                          : null
+                      }
+                    />
+                  }
                 />
-              }
-              topic={"Order delivered to 22 Baker Street"}
-              subtext={"16 Oct 2018, 09:38"}
-              icon2={
-                <Image
-                  style={{ width: 33, height: 42 }}
-                  source={require("../assets/images/order2.png")}
-                />
-              }
-            />
-          </View>
-        </View>
-      </ScrollView>
+              </View>
+            ))
+          )}
+        </ScrollView>
+      </View>
     </SafeAreaView>
   );
 };
@@ -150,10 +208,10 @@ const styles = StyleSheet.create({
   boundaryLine: { borderColor: "grey", borderWidth: 0.4 },
 
   button: {
-    marginBottom: 28,
+    // marginBottom: 28,
   },
 
-  orderUpdates: { paddingVertical: 20 },
+  orderUpdates: { paddingVertical: 20, paddingBottom: 300 },
   icons: {
     flexDirection: "row",
     justifyContent: "space-between",
