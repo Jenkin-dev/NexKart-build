@@ -31,7 +31,7 @@ const Orders = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const categories = ["All", "Paid", "Delivered", "Shipped", "Returned"];
   const { width } = Dimensions.get("screen");
-
+  const [delivering, setDelivering] = useState(false);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -71,6 +71,7 @@ const Orders = () => {
       return;
     }
     try {
+      setDelivering(true);
       const orderRef = doc(db, "users", user.uid, "orders", orderID);
 
       await updateDoc(orderRef, { status: "Delivered" });
@@ -88,6 +89,8 @@ const Orders = () => {
     } catch (error) {
       console.error("Error updating order:", error);
       Alert.alert("Error", "Delivery not confirmed");
+    } finally {
+      setDelivering(false);
     }
   };
 
@@ -113,7 +116,7 @@ const Orders = () => {
               style={styles.orderbutton}
               bgcolor={"#bddcf6"}
               textColor={"#4C69FF"}
-              text={"Confirm Delivery..."}
+              text={delivering ? "Confirming..." : "Confirm Delivery..."}
               fontfamily={"alexandriaLight"}
             />
           </>
