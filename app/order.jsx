@@ -152,6 +152,12 @@ const Orders = () => {
             />
             <Button
               style={styles.orderbutton}
+              onPress={() =>
+                Alert.alert(
+                  "Invalid Operation",
+                  "This feature is not available at the moment.",
+                )
+              }
               bgcolor={"#4C69FF"}
               textColor={"#BDDCF6"}
               text={"Leave Review"}
