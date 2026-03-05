@@ -1,4 +1,4 @@
-import {
+/*import {
   Dimensions,
   KeyboardAvoidingView,
   ScrollView,
@@ -60,7 +60,6 @@ const OTP = () => {
       const savedUsername = await AsyncStorage.getItem("User");
       const savedPassword = await SecureStore.getItemAsync("Userpassword");
 
-      // 1️⃣ Check if phone already has account
       const userDocRef = doc(db, "users", user.uid);
       const existingUserDoc = await getDoc(userDocRef);
 
@@ -72,7 +71,6 @@ const OTP = () => {
         return;
       }
 
-      // 2️⃣ Check if username is taken
       const usernameQuery = query(
         collection(db, "users"),
         where("username", "==", savedUsername.toLowerCase()),
@@ -85,7 +83,6 @@ const OTP = () => {
         return;
       }
 
-      // 3️⃣ Link email
       const internalEmail = `${savedUsername.trim().toLowerCase()}@nexkart.com`;
 
       const emailCredential = EmailAuthProvider.credential(
@@ -95,7 +92,6 @@ const OTP = () => {
 
       await linkWithCredential(user, emailCredential);
 
-      // 4️⃣ Save profile
       await setDoc(userDocRef, {
         username: savedUsername.toLowerCase(),
         phoneNumber: phoneNumber,
@@ -140,7 +136,7 @@ const OTP = () => {
               onFilled={(code) => {
                 setOtInput(code);
                 setFilled(true);
-                handleVerifyCode(code); // Auto-verify when all digits are entered
+                handleVerifyCode(code); 
               }}
               theme={{
                 pinCodeContainerStyle: styles.pinbox,
@@ -198,4 +194,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default OTP;
+export default OTP;*/

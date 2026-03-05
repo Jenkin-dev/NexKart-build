@@ -49,9 +49,7 @@ const Sidemenu = () => {
           />
         </TouchableOpacity>
         <View>
-          <Text style={styles.welcomeText}>
-            WELCOME {username.toUpperCase()}
-          </Text>
+          <Text style={styles.welcomeText}>HI {username.toUpperCase()}</Text>
           <TouchableOpacity onPress={() => router.push("/Home")}>
             <Text style={styles.text}>Home</Text>
           </TouchableOpacity>

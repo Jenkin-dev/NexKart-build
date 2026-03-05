@@ -94,7 +94,6 @@ const EditProfile = () => {
 
   return (
     <SafeAreaView style={styles.safeview}>
-      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()}>
           <Image
@@ -106,7 +105,6 @@ const EditProfile = () => {
         <View style={{ width: 24 }} />
       </View>
 
-      {/* Input Fields */}
       <View style={styles.formContainer}>
         <Text style={styles.label}>Username</Text>
         <TextInput
@@ -128,7 +126,6 @@ const EditProfile = () => {
         />
       </View>
 
-      {/* Save Button */}
       <Button
         onPress={handleSave}
         text={saving ? "Saving..." : "Save Changes"}

@@ -32,7 +32,6 @@ const Mobile = () => {
     }
     try {
       setLoading(true);
-      //Retrieving the credentials from signup page (Email, Username and password)
       const savedUsername = await AsyncStorage.getItem("User");
 
       const savedPassword = await SecureStore.getItemAsync("Userpassword");
@@ -42,14 +41,12 @@ const Mobile = () => {
         `The password that would be used for ${savedUsername} is ${savedPassword} and the email would be ${emailAddress}`,
       );
 
-      //CREATING THE USER ACCOUNT
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         emailAddress,
         savedPassword,
       );
 
-      //SAVING THE USER PROFILE
       const user = userCredential.user;
       await setDoc(doc(db, "users", user.uid), {
         username: savedUsername,

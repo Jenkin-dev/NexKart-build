@@ -69,8 +69,10 @@ const Settings = () => {
       Alert.alert("Success", "Account successfully deleted");
     } catch (error) {
       if (error.code === "auth/requires-recent-login") {
-        Alert.alert("Erorr", "Please re-authenticate to delete your account.");
-        // Redirect to a re-authentication flow/modal
+        Alert.alert(
+          "Erorr",
+          "Please re-authenticate(logout and relogin) to delete your account.",
+        );
       } else {
         console.error(error);
         Alert.alert("Error", "Unable to delete account");
@@ -97,7 +99,6 @@ const Settings = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}
       >
-        {/* Section 1: Account */}
         <Text style={styles.sectionHeader}>Account</Text>
         <View style={styles.sectionContainer}>
           <SettingRow
@@ -114,7 +115,6 @@ const Settings = () => {
           />
         </View>
 
-        {/* Section 2: Preferences */}
         <Text style={styles.sectionHeader}>Preferences</Text>
         <View style={styles.sectionContainer}>
           <SettingRow
@@ -147,14 +147,13 @@ const Settings = () => {
           /> */}
         </View>
 
-        {/* Section 3: About */}
         <Text style={styles.sectionHeader}>Support & Legal</Text>
         <View style={styles.sectionContainer}>
           <SettingRow
             icon={
               <MaterialIcons name="contact-support" size={24} color="#4C69FF" />
             }
-            title="Contact Support"
+            title="Contact"
             onPress={() =>
               Alert.alert("Contact Chat", "Contact nearest NexKart office")
             }
@@ -166,8 +165,7 @@ const Settings = () => {
           />
         </View>
 
-        {/* Section 4: Danger Zone */}
-        <Text style={[styles.sectionHeader, { color: "#FF4C96" }]}>
+        <Text style={[styles.sectionHeader, { color: "red" }]}>
           Delete Account
         </Text>
         <View style={styles.sectionContainer}>
@@ -192,8 +190,8 @@ const Settings = () => {
             style={[styles.row, { borderBottomWidth: 0 }]}
           >
             <View style={styles.rowLeft}>
-              <AntDesign name="delete" size={22} color="#FF4C96" />
-              <Text style={[styles.rowTitle, { color: "#FF4C96" }]}>
+              <AntDesign name="delete" size={22} color="red" />
+              <Text style={[styles.rowTitle, { color: "red" }]}>
                 {deleting ? "Deleting Account" : "Delete Account"}
               </Text>
             </View>

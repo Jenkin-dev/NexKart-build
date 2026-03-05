@@ -22,14 +22,11 @@ import { MaterialIcons } from "@expo/vector-icons";
 
 const ProductDetails = () => {
   const { width, height } = Dimensions.get("screen");
-  // Grab the data passed from the clicked card
   const { id } = useLocalSearchParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [process, setProcess] = useState(false);
   const [adding, setAdding] = useState(false);
-
-  //activating the stores
   const addToCart = useCartStore((state) => state.addToCart);
   const toggleLike = useWishlistStore((state) => state.toggleLike);
   const isLiked = useWishlistStore((state) => state.isLiked(id));
@@ -182,7 +179,6 @@ const ProductDetails = () => {
         </View>
       </ScrollView>
 
-      {/* Floating Add to Cart Button */}
       <View style={styles.bottomBar}>
         <Button
           onPress={handleAddToCart}

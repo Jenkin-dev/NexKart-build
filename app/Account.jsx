@@ -16,8 +16,6 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
 import Fontisto from "@expo/vector-icons/Fontisto";
-
-// 👈 Standardized your Firebase imports to use your central services file
 import { auth, db } from "../services/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { signOut } from "firebase/auth";
@@ -55,7 +53,6 @@ const Account = () => {
     fetchUserData();
   }, []);
 
-  // 🚀 The Secure Logout Flow
   const handleLogout = () => {
     Alert.alert(
       "Log Out",
@@ -80,7 +77,6 @@ const Account = () => {
   return (
     <SafeAreaView style={styles.safeview}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Profile Banner */}
         <ImageBackground
           source={require("../assets/images/dpimage.png")}
           resizeMode="stretch"
@@ -132,7 +128,6 @@ const Account = () => {
           </View>
         </ImageBackground>
 
-        {/* Account Options Menu */}
         <View style={styles.menuContainer}>
           <TouchableOpacity
             style={styles.menuItem}
@@ -192,7 +187,6 @@ const Account = () => {
             />
           </TouchableOpacity>
 
-          {/* Logout Button */}
           <TouchableOpacity
             style={[styles.menuItem, { borderBottomWidth: 0, marginTop: 20 }]}
             onPress={handleLogout}
@@ -254,7 +248,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 
-  // Menu Styles
   menuContainer: {
     backgroundColor: "white",
     borderRadius: 20,
@@ -272,7 +265,7 @@ const styles = StyleSheet.create({
     fontFamily: "alexandriaMedium",
     fontSize: 16,
     marginLeft: 15,
-    color: "#333",
+    color: "#333333",
   },
 });
 

@@ -21,7 +21,6 @@ const OrderItems = ({
           gap: 30,
           maxWidth: 0.8 * width,
           // backgroundColor: "red",
-          // height: ,
         }}
       >
         <Image

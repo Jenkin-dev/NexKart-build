@@ -69,7 +69,7 @@ const RootLayout = () => {
     if (!user && !isAuthScreen && segments[0] !== "OTP") {
       router.replace("/(tabs)/Login");
     } else if (user && isAuthScreen) {
-      router.replace("/Home"); //this would automatically navigate to the home screen once user logs in from any of the specified screen
+      router.replace("/Home");
     }
   }, [user, segments, initializing]);
 

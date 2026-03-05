@@ -114,13 +114,6 @@ const Orders = () => {
       case "Paid":
         return (
           <>
-            {/* <Button
-              style={styles.orderbutton}
-              bgcolor={"#bddcf6"}
-              textColor={"#4C69FF"}
-              text={"Order Details"}
-              fontfamily={"alexandriaLight"}
-            /> */}
             <Button
               onPress={() => handleDelivered(order)}
               style={styles.orderbutton}
@@ -134,13 +127,6 @@ const Orders = () => {
       case "Shipped":
         return (
           <>
-            {/* <Button
-              style={styles.orderbutton}
-              bgcolor={"#bddcf6"}
-              textColor={"#4C69FF"}
-              text={"Order Details"}
-              fontfamily={"alexandriaLight"}
-            /> */}
             <Button
               style={styles.orderbutton}
               bgcolor={"#4C69FF"}
@@ -153,13 +139,6 @@ const Orders = () => {
       case "Delivered":
         return (
           <>
-            {/* <Button
-              style={styles.orderbutton}
-              bgcolor={"#bddcf6"}
-              textColor={"#4C69FF"}
-              text={"Order Details"}
-              fontfamily={"alexandriaLight"}
-            /> */}
             <Button
               style={styles.orderbutton}
               onPress={() =>
@@ -178,13 +157,6 @@ const Orders = () => {
       case "Returned":
         return (
           <>
-            {/* <Button
-              style={styles.orderbutton}
-              bgcolor={"#bddcf6"}
-              textColor={"#4C69FF"}
-              text={"Contact Support"}
-              fontfamily={"alexandriaLight"}
-            /> */}
             <Button
               style={styles.orderbutton}
               bgcolor={"#4C69FF"}

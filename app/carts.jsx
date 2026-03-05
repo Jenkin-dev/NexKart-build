@@ -34,7 +34,7 @@ const Carts = () => {
 
         return total + numericPrice * item.qty;
       }, 0)
-      .toFixed(2); // 2 decimal places for currency
+      .toFixed(2); // 2 decimal places for currency precision
   };
 
   const handleCheckout = async () => {

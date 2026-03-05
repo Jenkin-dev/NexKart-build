@@ -142,7 +142,7 @@ const Home = () => {
               }
             />
           </TouchableOpacity>
-          <Text style={styles.greeting}>Hi, {greetingName}</Text>
+          <Text style={styles.greeting}>Welcome, {greetingName}</Text>
           <TouchableOpacity
             style={{
               flexDirection: "row",

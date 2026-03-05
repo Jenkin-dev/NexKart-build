@@ -169,7 +169,6 @@ const Activity = () => {
                   icon2={
                     <Image
                       style={{ width: 33, height: 42, resizeMode: "contain" }}
-                      // Grab the image of the FIRST item in that specific order using your dictionary!
                       source={
                         activity.items && activity.items[0]
                           ? ImageMap[activity.items[0].imageKey]

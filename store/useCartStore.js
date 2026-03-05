@@ -6,7 +6,6 @@ import { Alert } from "react-native";
 export const useCartStore = create((set, get) => ({
   cart: [],
 
-  // Load cart from Firebase when the app starts
   loadCart: async () => {
     const user = auth.currentUser;
     if (user) {
@@ -20,7 +19,6 @@ export const useCartStore = create((set, get) => ({
     }
   },
 
-  // Add a new item or increase quantity if it's already in the cart
   addToCart: async (product) => {
     const user = auth.currentUser;
     if (!user) return;
@@ -41,12 +39,10 @@ export const useCartStore = create((set, get) => ({
 
     set({ cart: updatedCart });
 
-    // Save the updated array to Firestore
     const userRef = doc(db, "users", user.uid);
     await setDoc(userRef, { cart: updatedCart }, { merge: true });
   },
 
-  // Increase or decrease quantity
   updateQuantity: async (productId, amount) => {
     const user = auth.currentUser;
     if (!user) return;
