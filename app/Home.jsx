@@ -1,4 +1,5 @@
 import {
+  Alert,
   Dimensions,
   Image,
   ScrollView,
@@ -20,7 +21,7 @@ import { auth, db } from "../services/firebase";
 import { ImageMap } from "../utils/imageMap";
 import { doc, getDoc } from "firebase/firestore";
 import { fetchProducts } from "../services/firebaseFetchProducts";
-import { MaterialCommunityIcons, Zocial } from "@expo/vector-icons";
+import { Feather, MaterialCommunityIcons, Zocial } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Home = () => {
@@ -29,6 +30,7 @@ const Home = () => {
   const [searching, setSearching] = useState(false);
   const { height } = Dimensions.get("screen");
   const [homeitems, setHomeitems] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const loadWishlist = useWishlistStore((state) => state.loadWishlist);
   const [greetingName, setGreetingName] = useState("Loading...");
 
@@ -39,6 +41,10 @@ const Home = () => {
         setHomeitems(products);
       } catch (err) {
         console.error("Error fetching products:", err);
+        Alert.alert(
+          `Error`,
+          `An error occured while trying to fetch products ${err}`,
+        );
       } finally {
         setFetchingProducts(false);
       }
@@ -79,6 +85,9 @@ const Home = () => {
     return () => unsubscribe();
   }, []);
 
+  const displayedItems = homeitems.filter((item) =>
+    item.name.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
   return (
     <View style={{ flex: 1 }}>
       <LinearGradient
@@ -90,9 +99,24 @@ const Home = () => {
           paddingHorizontal: 40,
           paddingTop: 50,
           zIndex: 10,
+          flexDirection: "row",
+          gap: 10,
         }}
       >
-        <Input inputtype={"Search for a product"} />
+        <Input
+          inputtype={"Search for a product"}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
+        <Feather
+          name="search"
+          size={24}
+          color="whitesmoke"
+          style={{ alignSelf: "center" }}
+          onPress={() => {
+            setSearching(!searching);
+          }}
+        />
       </LinearGradient>
 
       <SafeAreaView
@@ -104,7 +128,11 @@ const Home = () => {
         }}
       >
         <View style={[styles.top, { display: searching ? "none" : undefined }]}>
-          <TouchableOpacity onPress={() => router.push("/Sidemenu")}>
+          <TouchableOpacity
+            onPress={() => {
+              router.push("/Sidemenu");
+            }}
+          >
             <Image
               style={{ width: 20, height: 20, resizeMode: "center" }}
               source={
@@ -184,16 +212,30 @@ const Home = () => {
               display: searching ? "none" : undefined,
             }}
           >
-            {homeitems.map((item) => (
-              <HomeItems
-                key={item.id}
-                id={item.id}
-                source={item.imageKey}
-                noItems={item.noItems}
-                itemPrice={item.itemPrice}
-                name={item.name}
-              />
-            ))}
+            {displayedItems.length === 0 && !fetchingProducts ? (
+              <Text
+                style={{
+                  textAlign: "center",
+                  width: "100%",
+                  marginTop: 20,
+                  color: "gray",
+                  fontFamily: "alexandriaRegular",
+                }}
+              >
+                No products found matching "{searchQuery}"
+              </Text>
+            ) : (
+              displayedItems.map((item) => (
+                <HomeItems
+                  key={item.id}
+                  id={item.id}
+                  source={item.imageKey}
+                  noItems={item.noItems}
+                  itemPrice={item.itemPrice}
+                  name={item.name}
+                />
+              ))
+            )}
           </View>
         </ScrollView>
 

@@ -147,7 +147,8 @@ const Carts = () => {
             <Text style={styles.totalPrice}>USD {calculateTotal()}</Text>
           </View>
           <Button
-            onPress={() =>
+            onPress={() => {
+              if (isCheckingOut) return;
               Alert.alert(
                 `Are you sure you want to checkout?`,
                 `Proceeding to checkout with USD ${calculateTotal()}`,
@@ -160,8 +161,8 @@ const Carts = () => {
                     text: "Confirm Cart",
                   },
                 ],
-              )
-            }
+              );
+            }}
             text={isCheckingOut ? "Processing..." : "Checkout"}
             bgcolor={isCheckingOut ? "#888" : "#4C69FF"}
             textColor="white"
