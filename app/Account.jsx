@@ -14,6 +14,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useState, useEffect } from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import EvilIcons from "@expo/vector-icons/EvilIcons";
+import Fontisto from "@expo/vector-icons/Fontisto";
 
 // 👈 Standardized your Firebase imports to use your central services file
 import { auth, db } from "../services/firebase";
@@ -24,6 +26,7 @@ const Account = () => {
   const [username, setUsername] = useState("Loading...");
   const [userphone, setUserphone] = useState("Loading...");
   const [useremail, setUseremail] = useState("Loading...");
+  const [fetching, setFetching] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -49,23 +52,49 @@ const Account = () => {
     fetchUserData();
   }, []);
 
+  const fetchUserData = async () => {
+    const user = auth.currentUser;
+    if (user) {
+      setUseremail(user?.email);
+      setFetching(true);
+      try {
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          setUsername(docSnap.data().username || "User");
+          setUserphone(docSnap.data().phoneNumber || "No phone number added");
+        } else {
+          setUsername("User Details Not Found");
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      } finally {
+        setFetching(false);
+      }
+    }
+  };
+
   // 🚀 The Secure Logout Flow
   const handleLogout = () => {
-    Alert.alert("Log Out", "Are you sure you want to log out of NexKart?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Log Out",
-        style: "destructive",
-        onPress: async () => {
-          try {
-            // This triggers your _layout.jsx listener, clears memory, and navigates home automatically!
-            await signOut(auth);
-          } catch (error) {
-            Alert.alert("Error", "Could not log out. Please try again.");
-          }
+    Alert.alert(
+      "Log Out",
+      `${username} Are you sure you want to log out of NexKart?`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Log Out",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await signOut(auth);
+            } catch (error) {
+              Alert.alert("Error", "Could not log out. Please try again.");
+            }
+          },
         },
-      },
-    ]);
+      ],
+    );
   };
 
   return (
@@ -106,8 +135,18 @@ const Account = () => {
               <Text style={styles.username}>{username.toUpperCase()}</Text>
               <Text style={styles.phone}>{userphone}</Text>
               <Text style={styles.phone}>{useremail}</Text>
-              <TouchableOpacity style={styles.profileButton}>
+              <TouchableOpacity
+                style={styles.profileButton}
+                onPress={() => router.push("/EditProfile")}
+              >
                 <Text style={styles.profile}>Edit Profile</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => fetchUserData()}>
+                {fetching ? (
+                  <Fontisto name="spinner-refresh" size={24} color="black" />
+                ) : (
+                  <EvilIcons name="refresh" size={24} color="#4C69FF" />
+                )}
               </TouchableOpacity>
             </View>
           </View>
