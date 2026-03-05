@@ -176,7 +176,12 @@ const Account = () => {
             />
           </TouchableOpacity>
 
-          {/* <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => {
+              router.push("/Settings");
+            }}
+          >
             <AntDesign name="setting" size={24} color="#4C69FF" />
             <Text style={styles.menuText}>Settings</Text>
             <AntDesign
@@ -185,7 +190,7 @@ const Account = () => {
               color="grey"
               style={{ marginLeft: "auto" }}
             />
-          </TouchableOpacity> */}
+          </TouchableOpacity>
 
           {/* Logout Button */}
           <TouchableOpacity
