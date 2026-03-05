@@ -14,10 +14,12 @@ import { useEffect, useState } from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { deleteUser, getAuth } from "firebase/auth";
 
 const Settings = () => {
   const [notifications, setNotifications] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const SettingRow = ({ icon, title, onPress, rightElement }) => (
     <TouchableOpacity style={styles.row} onPress={onPress} disabled={!onPress}>
@@ -53,6 +55,28 @@ const Settings = () => {
       await AsyncStorage.setItem("push_notifications", JSON.stringify(value));
     } catch (e) {
       console.error("Failed to save settings", e);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    setDeleting(true);
+
+    try {
+      await deleteUser(user);
+      Alert.alert("Success", "Account successfully deleted");
+    } catch (error) {
+      if (error.code === "auth/requires-recent-login") {
+        Alert.alert("Erorr", "Please re-authenticate to delete your account.");
+        // Redirect to a re-authentication flow/modal
+      } else {
+        console.error(error);
+        Alert.alert("Error", "Unable to delete account");
+      }
+    } finally {
+      setDeleting(false);
     }
   };
   return (
@@ -144,14 +168,33 @@ const Settings = () => {
 
         {/* Section 4: Danger Zone */}
         <Text style={[styles.sectionHeader, { color: "#FF4C96" }]}>
-          Danger Zone
+          Delete Account
         </Text>
         <View style={styles.sectionContainer}>
-          <TouchableOpacity style={[styles.row, { borderBottomWidth: 0 }]}>
+          <TouchableOpacity
+            onPress={() => {
+              Alert.alert(
+                "Delete Account",
+                `Are you sure you want to delete this account`,
+                [
+                  {
+                    text: "Yes, Delete Account",
+                    onPress: () => {
+                      handleDeleteAccount();
+                    },
+                  },
+                  {
+                    text: "No",
+                  },
+                ],
+              );
+            }}
+            style={[styles.row, { borderBottomWidth: 0 }]}
+          >
             <View style={styles.rowLeft}>
               <AntDesign name="delete" size={22} color="#FF4C96" />
               <Text style={[styles.rowTitle, { color: "#FF4C96" }]}>
-                Delete Account
+                {deleting ? "Deleting Account" : "Delete Account"}
               </Text>
             </View>
           </TouchableOpacity>
