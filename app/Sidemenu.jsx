@@ -58,9 +58,7 @@ const Sidemenu = () => {
           <TouchableOpacity onPress={() => router.push("/Account")}>
             <Text style={styles.text}>Account</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push("/Activity")}>
-            <Text style={styles.text}>Activity</Text>
-          </TouchableOpacity>
+
           <TouchableOpacity onPress={() => router.push("./order")}>
             <Text style={styles.text}>My Orders</Text>
           </TouchableOpacity>
@@ -68,7 +66,7 @@ const Sidemenu = () => {
             <Text style={styles.text}>My Wishlist</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => signOut(auth)}>
+          <TouchableOpacity onPress={() => router.push("/Account")}>
             <Text style={styles.text}>Logout</Text>
           </TouchableOpacity>
         </View>

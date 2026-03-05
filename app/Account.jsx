@@ -28,30 +28,6 @@ const Account = () => {
   const [useremail, setUseremail] = useState("Loading...");
   const [fetching, setFetching] = useState(false);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      const user = auth.currentUser;
-      if (user) {
-        setUseremail(user.email);
-        try {
-          const docRef = doc(db, "users", user.uid);
-          const docSnap = await getDoc(docRef);
-
-          if (docSnap.exists()) {
-            setUsername(docSnap.data().username || "User");
-            setUserphone(docSnap.data().phoneNumber || "No phone number added");
-          } else {
-            setUsername("User Details Not Found");
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-        }
-      }
-    };
-
-    fetchUserData();
-  }, []);
-
   const fetchUserData = async () => {
     const user = auth.currentUser;
     if (user) {
@@ -74,6 +50,10 @@ const Account = () => {
       }
     }
   };
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
 
   // 🚀 The Secure Logout Flow
   const handleLogout = () => {
@@ -196,7 +176,7 @@ const Account = () => {
             />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem}>
+          {/* <TouchableOpacity style={styles.menuItem}>
             <AntDesign name="setting" size={24} color="#4C69FF" />
             <Text style={styles.menuText}>Settings</Text>
             <AntDesign
@@ -205,15 +185,15 @@ const Account = () => {
               color="grey"
               style={{ marginLeft: "auto" }}
             />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           {/* Logout Button */}
           <TouchableOpacity
             style={[styles.menuItem, { borderBottomWidth: 0, marginTop: 20 }]}
             onPress={handleLogout}
           >
-            <AntDesign name="logout" size={24} color="#FF4C96" />
-            <Text style={[styles.menuText, { color: "#FF4C96" }]}>Log Out</Text>
+            <AntDesign name="logout" size={24} color="red" />
+            <Text style={[styles.menuText, { color: "red" }]}>Log Out</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

@@ -16,10 +16,12 @@ import Button from "../components/button";
 import { LinearGradient } from "expo-linear-gradient";
 import Input from "../components/input";
 import { useWishlistStore } from "../store/wishliststore";
-import { auth } from "../services/firebase";
+import { auth, db } from "../services/firebase";
 import { ImageMap } from "../utils/imageMap";
+import { doc, getDoc } from "firebase/firestore";
 import { fetchProducts } from "../services/firebaseFetchProducts";
 import { MaterialCommunityIcons, Zocial } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Home = () => {
   const [incoming, setIncoming] = useState(false);
@@ -28,6 +30,7 @@ const Home = () => {
   const { height } = Dimensions.get("screen");
   const [homeitems, setHomeitems] = useState([]);
   const loadWishlist = useWishlistStore((state) => state.loadWishlist);
+  const [greetingName, setGreetingName] = useState("Loading...");
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -42,9 +45,34 @@ const Home = () => {
     };
     loadProducts();
 
+    const loadName = async () => {
+      try {
+        const user = auth.currentUser;
+        if (user) {
+          const docRef = doc(db, "users", user.uid);
+          const docSnap = await getDoc(docRef);
+
+          if (docSnap.exists() && docSnap.data().username) {
+            const fetchedName = docSnap.data().username;
+            setGreetingName(fetchedName);
+
+            // Save it locally immediately so we never have to fetch it again!
+            await AsyncStorage.setItem("savedUsername", fetchedName);
+          } else {
+            setGreetingName("User");
+          }
+        }
+      } catch (error) {
+        console.error("Error loading username:", error);
+        setGreetingName("User");
+      }
+    };
+
+    loadName();
+
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
-        loadWishlist(); // load user-specific wishlist from Firestore
+        loadWishlist();
       }
     });
 
@@ -86,6 +114,7 @@ const Home = () => {
               }
             />
           </TouchableOpacity>
+          <Text style={styles.greeting}>Hi, {greetingName}</Text>
           <TouchableOpacity
             style={{
               flexDirection: "row",
@@ -214,6 +243,12 @@ const styles = StyleSheet.create({
     fontSize: 15,
     alignSelf: "center",
     color: "white",
+  },
+
+  greeting: {
+    fontFamily: "alexandriaBold",
+    fontSize: 25,
+    color: "#4C69FF",
   },
   top: {
     flexDirection: "row",

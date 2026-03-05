@@ -185,6 +185,7 @@ const ProductDetails = () => {
       <View style={styles.bottomBar}>
         <Button
           onPress={handleAddToCart}
+          disabled={adding}
           text={adding ? "Adding product to Cart" : "Add to Cart"}
           bgcolor={adding ? "#bddcf6" : "#4C69FF"}
           textColor={adding ? "grey" : "white"}
