@@ -8,7 +8,7 @@ export default function Index() {
   useEffect(() => {
     const checkFirstLaunch = async () => {
       try {
-        // 1. Check local memory to see if they've opened the app before
+        // This checkes local memory to see if they've opened the app before
         const hasLaunched = await AsyncStorage.getItem("hasLaunched");
 
         setTimeout(async () => {
