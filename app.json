@@ -4,13 +4,15 @@
     "slug": "nexkart",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/Signup_Loginlogo.png",
     "scheme": "nexkart",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.nexkart"
+      // "googleServicesFile": "./GoogleService-Info.plist"
+      //In case i later need to build the app for ios
     },
     "android": {
       "adaptiveIcon": {
