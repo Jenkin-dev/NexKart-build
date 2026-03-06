@@ -60,6 +60,10 @@ const RootLayout = () => {
     if (initializing) return;
 
     const isAuthScreen =
+      segments.length === 0 ||
+      segments[0] === "index" ||
+      segments[0] === "Onboarding1" ||
+      segments[0] === "Onboarding2" ||
       segments[0] === "Login" ||
       segments[0] === "Signup" ||
       segments[0] === "ExistingUser" ||
