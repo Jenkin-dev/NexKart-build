@@ -56,7 +56,7 @@ const Account = () => {
   const handleLogout = () => {
     Alert.alert(
       "Log Out",
-      `${username} Are you sure you want to log out of NexKart?`,
+      `${username}, Are you sure you want to log out of NexKart?`,
       [
         { text: "Cancel", style: "cancel" },
         {
@@ -91,7 +91,7 @@ const Account = () => {
                 source={require("../assets/images/menu.png")}
               />
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push("/Settings")}>
               <Image
                 style={styles.image}
                 source={require("../assets/images/settings.png")}

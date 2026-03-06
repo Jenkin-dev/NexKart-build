@@ -21,7 +21,7 @@ import { auth, db } from "../services/firebase";
 import { ImageMap } from "../utils/imageMap";
 import { doc, getDoc } from "firebase/firestore";
 import { fetchProducts } from "../services/firebaseFetchProducts";
-import { Feather, MaterialCommunityIcons, Zocial } from "@expo/vector-icons";
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Home = () => {
@@ -240,7 +240,12 @@ const Home = () => {
         </ScrollView>
 
         <Button
-          onPress={() => setSearching(!searching)}
+          onPress={() => {
+            setSearching(!searching);
+            if (searching) {
+              setSearchQuery("");
+            }
+          }}
           style={{
             position: "absolute",
             bottom: 0.01 * height,

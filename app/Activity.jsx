@@ -36,7 +36,7 @@ const Activity = () => {
 
           setRecentActivities(fetchedActivities);
         } catch (error) {
-          console.error("An error occured while fetching activity:", "error");
+          console.error("An error occured while fetching activity:", error);
         } finally {
           setLoading(false);
         }

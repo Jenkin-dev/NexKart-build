@@ -26,7 +26,7 @@ const OrderItems = ({
         <Image
           style={{
             width: "30%",
-            resizeMode: "none",
+            resizeMode: "contain",
             height: 98,
             alignSelf: "center",
           }}

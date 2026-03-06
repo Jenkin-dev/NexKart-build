@@ -1,4 +1,4 @@
-import { Alert, StyleSheet, Text } from "react-native";
+import { Alert, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { Image, View } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useCartStore } from "../store/useCartStore";
@@ -31,21 +31,17 @@ const AddedToCarts = ({
         <Text style={styles.name}>{productname}</Text>
         <Text style={styles.price}>{productprice}</Text>
         <View style={{ flexDirection: "row", gap: 10, marginTop: 25 }}>
-          <AntDesign
-            name="minus-square"
-            size={24}
-            color="#4C69FF"
+          <TouchableOpacity
             onPress={() => {
               if (qty > 0) {
                 updateQuantity(id, -1);
               }
             }}
-          />
+          >
+            <AntDesign name="minus-square" size={24} color="#4C69FF" />
+          </TouchableOpacity>
           <Text>{qty}</Text>
-          <AntDesign
-            name="plus-square"
-            size={24}
-            color="#4C69FF"
+          <TouchableOpacity
             onPress={() => {
               if (qty < noItems) {
                 updateQuantity(id, 1);
@@ -56,7 +52,9 @@ const AddedToCarts = ({
                 );
               }
             }}
-          />
+          >
+            <AntDesign name="plus-square" size={24} color="#4C69FF" />
+          </TouchableOpacity>
         </View>
       </View>
     </View>

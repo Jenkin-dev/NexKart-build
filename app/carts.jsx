@@ -28,7 +28,7 @@ const Carts = () => {
   const calculateTotal = () => {
     return cartItems
       .reduce((total, item) => {
-        const priceString = item.itemPrice;
+        const priceString = item.itemPrice || "0";
 
         const numericPrice = parseFloat(priceString.replace(/[^0-9.]/g, ""));
 

@@ -67,6 +67,7 @@ const styles = StyleSheet.create({
   wish: {
     flexDirection: "row",
     flexWrap: "wrap",
+    justifyContent: "space-between",
   },
 });
 
