@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "nexkart",
+    "name": "NexKart",
     "slug": "nexkart",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -9,7 +9,8 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.nexkart"
     },
     "android": {
       "adaptiveIcon": {
@@ -35,9 +36,9 @@
           "image": "./assets/images/logo.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#506EFF",
+          "backgroundColor": "#3DBECB",
           "dark": {
-            "backgroundColor": "#506EFF"
+            "backgroundColor": "#3DBECB"
           }
         }
       ],
