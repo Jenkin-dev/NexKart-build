@@ -228,10 +228,10 @@ const styles = StyleSheet.create({
   },
   username: { fontSize: 20, fontFamily: "alexandriaBold", color: "#333" },
   phone: {
-    fontFamily: "alexandriaMedium",
+    fontFamily: "alexandriaSemibold",
     fontSize: 13,
     marginVertical: 2,
-    color: "#555",
+    color: "#4C69FF",
   },
   profileButton: {
     backgroundColor: "#4C69FF",
