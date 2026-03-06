@@ -11,8 +11,6 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.nexkart"
-      // "googleServicesFile": "./GoogleService-Info.plist"
-      //In case i later need to build the app for ios
     },
     "android": {
       "adaptiveIcon": {
