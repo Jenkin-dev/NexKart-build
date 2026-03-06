@@ -30,7 +30,14 @@ const AddedToCarts = ({
       <View>
         <Text style={styles.name}>{productname}</Text>
         <Text style={styles.price}>{productprice}</Text>
-        <View style={{ flexDirection: "row", gap: 10, marginTop: 25 }}>
+        <View
+          style={{
+            flexDirection: "row",
+            gap: 10,
+            marginTop: 25,
+            alignItems: "center",
+          }}
+        >
           <TouchableOpacity
             onPress={() => {
               if (qty > 0) {
@@ -40,7 +47,9 @@ const AddedToCarts = ({
           >
             <AntDesign name="minus-square" size={24} color="#4C69FF" />
           </TouchableOpacity>
-          <Text>{qty}</Text>
+          <Text style={{ fontFamily: "alexandriaMedium", fontSize: 16 }}>
+            {qty}
+          </Text>
           <TouchableOpacity
             onPress={() => {
               if (qty < noItems) {
