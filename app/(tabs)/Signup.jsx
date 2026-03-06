@@ -44,6 +44,7 @@ const Signup = () => {
   const storeUserEmail = async (userEmail) => {
     try {
       await AsyncStorage.setItem("UserEmail", userEmail);
+      await AsyncStorage.setItem("savedEmail", userEmail);
       console.log("The user's email adress is:", userEmail);
     } catch (e) {
       console.log("An error occured fetching last used Username", e);

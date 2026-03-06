@@ -66,7 +66,7 @@ const RootLayout = () => {
       segments[0] === "Mobile" ||
       segments[0] === "(tabs)";
 
-    if (!user && !isAuthScreen && segments[0] !== "OTP") {
+    if (!user && !isAuthScreen) {
       router.replace("/(tabs)/Login");
     } else if (user && isAuthScreen) {
       router.replace("/Home");
@@ -85,7 +85,6 @@ const RootLayout = () => {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />
       <Stack.Screen name="Mobile" />
-      <Stack.Screen name="OTP" />
       <Stack.Screen name="Home" />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
     </Stack>
