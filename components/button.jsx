@@ -9,6 +9,7 @@ const Button = ({
   onPress,
   bgcolor,
   fontsize,
+  disabled,
 }) => {
   return (
     <TouchableOpacity
@@ -24,6 +25,7 @@ const Button = ({
         flexDirection: "row",
         alignItems: "center",
       }}
+      disabled={disabled}
     >
       {icon && icon}
 

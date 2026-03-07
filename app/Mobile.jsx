@@ -27,7 +27,7 @@ const Mobile = () => {
 
   const handleCreateAccount = async () => {
     if (phoneNumber.length < 10) {
-      Alert.alert("Invalid Input, ", "Please enter a valid phone number");
+      Alert.alert("Invalid Input", "Please enter a valid phone number");
       return;
     }
     try {
@@ -37,9 +37,6 @@ const Mobile = () => {
       const savedPassword = await SecureStore.getItemAsync("Userpassword");
 
       const emailAddress = await AsyncStorage.getItem("UserEmail");
-      console.log(
-        `The password that would be used for ${savedUsername} is ${savedPassword} and the email would be ${emailAddress}`,
-      );
 
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -55,23 +52,41 @@ const Mobile = () => {
         createdAt: new Date().toISOString(),
       });
 
-      Alert.alert(
+      await Alert.alert(
         "Success",
-        `Congratulations ${savedUsername}, you have succesfully created an account`,
+        `Congratulations ${savedUsername}, you have successfully created an account`,
       );
 
       router.replace("/Home");
     } catch (err) {
-      console.error(err);
-      if (err.code === "auth/email-already-in-use") {
-        Alert.alert(
-          "Error",
-          `This username/email is already taken. Please try another.`,
-        );
-        router.replace("/(tabs)/Signup");
-      } else {
-        Alert.alert("Signup Error", err.message);
-        router.replace("/(tabs)/Signup");
+      console.error("Signup Error:", err);
+
+      switch (err.code) {
+        case "auth/email-already-in-use":
+          Alert.alert(
+            "Account Exists",
+            "This email is already taken. Please try logging in or use another email.",
+          );
+          router.replace("/(tabs)/Signup");
+          break;
+        case "auth/invalid-email":
+          Alert.alert(
+            "Invalid Email",
+            "The email address you provided is not valid. Please check for typos.",
+          );
+          router.replace("/(tabs)/Signup");
+          break;
+
+        case "auth/network-request-failed":
+          Alert.alert(
+            "Network Error",
+            "Please check your internet connection and try again.",
+          );
+
+          break;
+        default:
+          Alert.alert("Signup Failed", err.message);
+          break;
       }
     } finally {
       setLoading(false);
@@ -108,6 +123,7 @@ const Mobile = () => {
           text={loading ? "Creating Account" : "Finish Signup"}
           textColor={loading ? "grey" : "white"}
           fontfamily={"alexandriaSemibold"}
+          disabled={loading}
         />
       </KeyboardAvoidingView>
     </SafeView>
