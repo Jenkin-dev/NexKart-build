@@ -57,7 +57,7 @@ const Mobile = () => {
         `Congratulations ${savedUsername}, you have successfully created an account`,
       );
 
-      router.replace("/Home");
+      // router.replace("/Home");
     } catch (err) {
       console.error("Signup Error:", err);
 

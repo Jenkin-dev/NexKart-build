@@ -77,28 +77,60 @@ const ExistingUser = () => {
           );
         } catch (error) {
           console.error("Reset Error:", error);
-          Alert.alert("Reset Failed", error.message);
+          Alert.alert(
+            "Reset Failed",
+            "Check your internet connection and try again",
+          );
         } finally {
           setSendingMail(false);
         }
       };
 
-      Alert.alert(
-        "Login Failed",
-        "Confirm login details/Check internet connection.",
-        [
-          {
-            text: "Forgot Password",
-            onPress: () => sendPasswordReset(),
-          },
-          {
-            text: "Try Again  ",
-            onPress: () => console.log("Cancel Pressed"),
-            style: "cancel",
-          },
-        ],
-      );
       console.error(error);
+
+      if (error.code === "auth/user-not-found") {
+        Alert.alert(
+          "Login Failed",
+          "Confirm login details/Check internet connection.",
+          [
+            {
+              text: "Forgot Password",
+              onPress: () => sendPasswordReset(),
+            },
+            {
+              text: "Try Again  ",
+              onPress: () => console.log("Cancel Pressed"),
+              style: "cancel",
+            },
+          ],
+        );
+      } else if (error.code === "auth/too-many-requests") {
+        Alert.alert(
+          "Too Many Attempts",
+          "Your account has been temporarily locked due to many failed login attempts. Please reset your password or try again later.",
+        );
+      } else if (error.code === "auth/wrong-password") {
+        Alert.alert(
+          "Login Failed",
+          "Confirm login details/Check internet connection.",
+          [
+            {
+              text: "Forgot Password",
+              onPress: () => sendPasswordReset(),
+            },
+            {
+              text: "Try Again  ",
+              onPress: () => console.log("Cancel Pressed"),
+              style: "cancel",
+            },
+          ],
+        );
+      } else {
+        Alert.alert(
+          "Login Failed",
+          "Please check your internet connection and try again.",
+        );
+      }
     } finally {
       setLoading(false);
     }

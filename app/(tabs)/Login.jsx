@@ -52,63 +52,65 @@ const Login = () => {
 
       Alert.alert(
         "Success",
-        `A password reset link has been sent to ${emailAddress}`,
+        `A password reset link has been sent to ${emailAddress} provided it an account exists for this email`,
       );
     } catch (error) {
       console.error("Reset Error:", error);
-      Alert.alert("Reset Failed", error.message);
+      Alert.alert("Reset Failed", "Could not reset password. Please try again");
     } finally {
       setSendingMail(false);
     }
   };
 
-  const styles = StyleSheet.create({
-    forgotPassword: {
-      color: sendingmail ? "grey" : "#4C69FF",
-      fontFamily: "regular",
-      fontSize: 13,
-    },
+  const handleLogin = async () => {
+    if (password.length < 6) {
+      Alert.alert(
+        "Invalid Password",
+        "Please ensure the password is at least 6 characters.",
+      );
+      return;
+    }
 
-    line: {
-      height: 1,
-      backgroundColor: "#ccc",
-      width: "100%",
-      marginVertical: 40,
-    },
+    setLoading(true);
+    try {
+      const emailAddress = await AsyncStorage.getItem("savedEmail");
 
-    text1: {
-      fontSize: 20,
-      fontFamily: "medium",
-      color: "#000000",
-    },
+      if (!emailAddress) {
+        Alert.alert(
+          "Error",
+          "No account found. Please use the 'existing user' link to sign in.",
+        );
+        setLoading(false);
+        return;
+      }
 
-    text2: {
-      fontSize: 30,
-      fontFamily: "medium",
-    },
-
-    text3: {
-      fontSize: 15,
-      paddingTop: 20,
-      fontFamily: "semibold",
-      color: "#4C69FF",
-    },
-
-    dp: {
-      height: 80,
-      width: 80,
-    },
-
-    icon: {
-      height: 24,
-      width: 24,
-      position: "relative",
-      left: -50,
-      top: 2,
-      marginBottom: 5,
-      alignSelf: "center",
-    },
-  });
+      await signInWithEmailAndPassword(auth, emailAddress, password);
+      // Let the _layout.jsx automatically route them to Home, or you can force it here:
+      router.replace("/Home");
+    } catch (error) {
+      console.error("Login Error:", error);
+      if (error.code === "auth/user-not-found") {
+        Alert.alert(
+          "Login Failed",
+          "Incorrect email or password. Please try again.",
+        );
+      } else if (error.code === "auth/too-many-requests") {
+        Alert.alert(
+          "Too Many Attempts",
+          "Your account has been temporarily locked due to many failed login attempts. Please reset your password or try again later.",
+        );
+      } else if (error.code === "auth/wrong-password") {
+        Alert.alert("Incorrect Details", "Input valid login credentials");
+      } else {
+        Alert.alert(
+          "Login Failed",
+          "Please check your internet connection and try again.",
+        );
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     const getUserName = async () => {
@@ -135,7 +137,7 @@ const Login = () => {
         if (passWord) {
           setStoredPassword(passWord);
         }
-        console.log("Retrieved password", passWord);
+        // console.log("Retrieved password", passWord);
       } catch (e) {
         console.log("an error occured", e);
       }
@@ -188,41 +190,15 @@ const Login = () => {
                 backgroundColor: loading ? "#A0A0A0" : "#3DBECB",
                 marginVertical: 15,
               }}
-              onPress={async () => {
-                if (password.length >= 6) {
-                  setLoading(true);
-                  try {
-                    const emailAddress =
-                      await AsyncStorage.getItem("savedEmail");
-                    const savedUsername =
-                      await AsyncStorage.getItem("savedUsername");
-                    console.log(
-                      "Attempting login for:",
-                      emailAddress,
-                      savedUsername,
-                    );
-
-                    await signInWithEmailAndPassword(
-                      auth,
-                      emailAddress,
-                      password,
-                    );
-                  } catch (error) {
-                    console.error(error);
-                    Alert.alert("Login Failed", error.message);
-                  } finally {
-                    setLoading(false);
-                  }
-                } else {
-                  Alert.alert(
-                    "Invalid Password",
-                    "Please ensure the password is at least 6 characters",
-                  );
-                }
-              }}
+              onPress={handleLogin}
             />
             <TouchableOpacity onPress={handleForgotPassword}>
-              <Text style={styles.forgotPassword}>
+              <Text
+                style={[
+                  styles.forgotPassword,
+                  { color: sendingmail ? "grey" : "#4C69FF" },
+                ]}
+              >
                 {sendingmail
                   ? "Sending password reset email"
                   : "Forgot Password?"}
@@ -235,7 +211,7 @@ const Login = () => {
             icon={
               <Image
                 style={styles.icon}
-                source={require("../../assets/images/google.png")}
+                source={require("../../assets/images/faceid.png")}
               />
             }
             textColor="#4C69FF"
@@ -245,7 +221,7 @@ const Login = () => {
               borderWidth: 2,
               marginBottom: 20,
             }}
-            text="Continue with Google"
+            text="Login with Biometric"
           />
         </View>
       </ScrollView>
@@ -259,4 +235,51 @@ const Login = () => {
     </SafeView>
   );
 };
+
+const styles = StyleSheet.create({
+  forgotPassword: {
+    fontFamily: "regular",
+    fontSize: 13,
+  },
+
+  line: {
+    height: 1,
+    backgroundColor: "#ccc",
+    width: "100%",
+    marginVertical: 40,
+  },
+
+  text1: {
+    fontSize: 20,
+    fontFamily: "medium",
+    color: "#000000",
+  },
+
+  text2: {
+    fontSize: 30,
+    fontFamily: "medium",
+  },
+
+  text3: {
+    fontSize: 15,
+    paddingTop: 20,
+    fontFamily: "semibold",
+    color: "#4C69FF",
+  },
+
+  dp: {
+    height: 80,
+    width: 80,
+  },
+
+  icon: {
+    height: 24,
+    width: 24,
+    position: "relative",
+    left: -50,
+    top: 2,
+    marginBottom: 5,
+    alignSelf: "center",
+  },
+});
 export default Login;

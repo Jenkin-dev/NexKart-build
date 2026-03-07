@@ -53,7 +53,6 @@ const Signup = () => {
 
   const storePassword = async (passWord) => {
     try {
-      console.log("The last used password is", passWord);
       await SecureStore.setItemAsync("Userpassword", passWord);
     } catch (e) {
       console.log("An error occured trying to fetch last used Password", e);
