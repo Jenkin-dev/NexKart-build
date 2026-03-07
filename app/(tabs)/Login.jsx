@@ -26,8 +26,8 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { auth } from "../../services/firebase";
-// import { SecurityLevel } from "expo-local-authentication";
 import * as LocalAuthentication from "expo-local-authentication";
+import { MaterialIcons } from "@expo/vector-icons";
 
 const Login = () => {
   const { zusUsername, setZusUsername } = useUsername();
@@ -37,9 +37,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [sendingmail, setSendingMail] = useState(false);
   const [isBiometricSupported, setIsBiometricSupported] = useState(false);
-  const [storedUser, setStoredUser] = useState("");
-  const [storedPassword, setStoredPassword] = useState("");
-
+  const [bioauth, setBioauth] = useState(false);
   useEffect(() => {
     const initializeData = async () => {
       try {
@@ -52,14 +50,20 @@ const Login = () => {
 
         const compatible = await LocalAuthentication.hasHardwareAsync();
         const enrolled = await LocalAuthentication.isEnrolledAsync();
-        const types =
-          await LocalAuthentication.supportedAuthenticationTypesAsync();
-        console.log("--- BIOMETRIC DEBUG ---");
-        console.log("Has Hardware:", compatible);
-        console.log("Is Enrolled:", enrolled);
-        console.log("Supported Types (1=Fingerprint, 2=Face, 3=Iris):", types);
 
-        setIsBiometricSupported(true);
+        // 1. Fetch raw string from storage
+        const rawBioAuth = await AsyncStorage.getItem("bioauth");
+
+        // 2. Parse it safely. If it is null (first time opening app), default to false
+        const isBioAllowed =
+          rawBioAuth !== null ? JSON.parse(rawBioAuth) : false;
+
+        setBioauth(isBioAllowed);
+        setIsBiometricSupported(compatible && enrolled);
+
+        if (compatible && enrolled && isBioAllowed) {
+          handleBiometricAuth();
+        }
       } catch (e) {
         console.error("An error occured", e);
       }
@@ -225,12 +229,14 @@ const Login = () => {
               }}
               onPress={handleLogin}
             />
-            {isBiometricSupported && (
+            {isBiometricSupported && bioauth && (
               <Button
                 icon={
-                  <Image
+                  <MaterialIcons
                     style={styles.icon}
-                    source={require("../../assets/images/faceid.png")}
+                    name="fingerprint"
+                    size={24}
+                    color="#4C69FF"
                   />
                 }
                 text={loading ? "Verifying..." : "Login with Biometrics"}

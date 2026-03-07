@@ -15,11 +15,14 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { deleteUser, getAuth } from "firebase/auth";
+import * as LocalAuthentication from "expo-local-authentication";
 
 const Settings = () => {
   const [notifications, setNotifications] = useState(true);
-  const [darkMode, setDarkMode] = useState(false);
+  // const [darkMode, setDarkMode] = useState(false);
+  const [bioAuth, setBioAuth] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [showBiotoggle, setshowBiotoggle] = useState(false);
 
   const SettingRow = ({ icon, title, onPress, rightElement }) => (
     <TouchableOpacity style={styles.row} onPress={onPress} disabled={!onPress}>
@@ -39,6 +42,7 @@ const Settings = () => {
     const loadSettings = async () => {
       try {
         const savedValue = await AsyncStorage.getItem("push_notifications");
+
         if (savedValue !== null) {
           setNotifications(JSON.parse(savedValue));
         }
@@ -47,6 +51,34 @@ const Settings = () => {
       }
     };
     loadSettings();
+
+    const bioconfirm = async () => {
+      const compatible = await LocalAuthentication.hasHardwareAsync();
+      const enrolled = await LocalAuthentication.isEnrolledAsync();
+      const rawBioAuth = await AsyncStorage.getItem("bioauth");
+
+      let currentBioState = false;
+
+      if (rawBioAuth !== null) {
+        currentBioState = JSON.parse(rawBioAuth);
+        setBioAuth(currentBioState);
+      }
+
+      setshowBiotoggle(compatible && enrolled);
+
+      console.log(
+        "Compatibility:",
+        compatible,
+        "Enrolled:",
+        enrolled,
+        "Is Bio Enabled in Storage?:",
+        currentBioState,
+        "Will Toggle Show?:",
+        showBiotoggle,
+      );
+    };
+
+    bioconfirm();
   }, []);
 
   const toggleNotifications = async (value) => {
@@ -55,6 +87,17 @@ const Settings = () => {
       await AsyncStorage.setItem("push_notifications", JSON.stringify(value));
     } catch (e) {
       console.error("Failed to save settings", e);
+    }
+  };
+
+  const toggleBioAuth = async (value) => {
+    setBioAuth(value);
+
+    console.log("toggledto", value);
+    try {
+      await AsyncStorage.setItem("bioauth", JSON.stringify(value));
+    } catch (e) {
+      console.error("BioAuth toggle failed");
     }
   };
 
@@ -83,7 +126,6 @@ const Settings = () => {
   };
   return (
     <SafeAreaView style={styles.safeview}>
-      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()}>
           <Image
@@ -134,6 +176,21 @@ const Settings = () => {
               />
             }
           />
+          {showBiotoggle && (
+            <SettingRow
+              icon={
+                <MaterialIcons name="fingerprint" size={24} color="#4C69FF" />
+              }
+              title="Login with Biometrics"
+              rightElement={
+                <Switch
+                  value={bioAuth}
+                  onValueChange={toggleBioAuth}
+                  trackColor={{ true: "#4C69FF" }}
+                />
+              }
+            />
+          )}
           {/* <SettingRow
             icon={<MaterialIcons name="dark-mode" size={24} color="#4C69FF" />}
             title="Dark Mode"
