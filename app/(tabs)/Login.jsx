@@ -26,6 +26,8 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { auth } from "../../services/firebase";
+// import { SecurityLevel } from "expo-local-authentication";
+import * as LocalAuthentication from "expo-local-authentication";
 
 const Login = () => {
   const { zusUsername, setZusUsername } = useUsername();
@@ -34,9 +36,37 @@ const Login = () => {
   const { height } = Dimensions.get("screen");
   const [loading, setLoading] = useState(false);
   const [sendingmail, setSendingMail] = useState(false);
-
+  const [isBiometricSupported, setIsBiometricSupported] = useState(false);
   const [storedUser, setStoredUser] = useState("");
   const [storedPassword, setStoredPassword] = useState("");
+
+  useEffect(() => {
+    const initializeData = async () => {
+      try {
+        const userName = await AsyncStorage.getItem("savedUsername");
+        if (userName) {
+          setZusUsername(userName);
+        } else {
+          setZusUsername("Undefined User");
+        }
+
+        const compatible = await LocalAuthentication.hasHardwareAsync();
+        const enrolled = await LocalAuthentication.isEnrolledAsync();
+        const types =
+          await LocalAuthentication.supportedAuthenticationTypesAsync();
+        console.log("--- BIOMETRIC DEBUG ---");
+        console.log("Has Hardware:", compatible);
+        console.log("Is Enrolled:", enrolled);
+        console.log("Supported Types (1=Fingerprint, 2=Face, 3=Iris):", types);
+
+        setIsBiometricSupported(true);
+      } catch (e) {
+        console.error("An error occured", e);
+      }
+    };
+
+    initializeData();
+  }, []);
 
   const handleForgotPassword = async () => {
     try {
@@ -85,8 +115,8 @@ const Login = () => {
       }
 
       await signInWithEmailAndPassword(auth, emailAddress, password);
-      // Let the _layout.jsx automatically route them to Home, or you can force it here:
-      router.replace("/Home");
+
+      // router.replace("/Home");
     } catch (error) {
       console.error("Login Error:", error);
       if (error.code === "auth/user-not-found") {
@@ -112,39 +142,42 @@ const Login = () => {
     }
   };
 
-  useEffect(() => {
-    const getUserName = async () => {
-      try {
-        const userName = await AsyncStorage.getItem("savedUsername");
-        if (userName) {
-          setZusUsername(userName);
-          setStoredUser(userName);
-        } else {
-          setZusUsername("Undefined");
+  const handleBiometricAuth = async () => {
+    try {
+      const biometricAuth = await LocalAuthentication.authenticateAsync({
+        promptMessage: "Login to NexKart",
+        disableDeviceFallback: false,
+        cancelLabel: "Cancel",
+      });
+
+      if (biometricAuth.success) {
+        setLoading(true);
+
+        const emailAddress = await AsyncStorage.getItem("savedEmail");
+        const savedPassword = await SecureStore.getItemAsync("Userpassword");
+
+        if (!emailAddress || !savedPassword) {
+          Alert.alert(
+            "Error",
+            "No saved credentials found. Please log in manually with your password first.",
+          );
+          setLoading(false);
+          return;
         }
-        console.log("Retrieved username", userName);
-        console.log("zustand username", storedUser);
-      } catch (e) {
-        console.log("an error occured", e);
+
+        await signInWithEmailAndPassword(auth, emailAddress, savedPassword);
+        // router.replace("/Home");
       }
-    };
-
-    getUserName();
-
-    const getPassword = async () => {
-      try {
-        const passWord = await SecureStore.getItemAsync("Userpassword");
-        if (passWord) {
-          setStoredPassword(passWord);
-        }
-        // console.log("Retrieved password", passWord);
-      } catch (e) {
-        console.log("an error occured", e);
-      }
-    };
-
-    getPassword();
-  }, []);
+    } catch (error) {
+      console.error("Biometric Error:", error);
+      Alert.alert(
+        "Authentication Failed",
+        "Could not verify Biometrics. Please use your password",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <SafeView>
@@ -188,10 +221,28 @@ const Login = () => {
               textColor={"white"}
               style={{
                 backgroundColor: loading ? "#A0A0A0" : "#3DBECB",
-                marginVertical: 15,
+                marginTop: 15,
               }}
               onPress={handleLogin}
             />
+            {isBiometricSupported && (
+              <Button
+                icon={
+                  <Image
+                    style={styles.icon}
+                    source={require("../../assets/images/faceid.png")}
+                  />
+                }
+                text={loading ? "Verifying..." : "Login with Biometrics"}
+                textColor={"#4C69FF"}
+                disabled={loading}
+                style={{
+                  backgroundColor: "#E8EEFF",
+                  marginVertical: 15,
+                }}
+                onPress={handleBiometricAuth}
+              />
+            )}
             <TouchableOpacity onPress={handleForgotPassword}>
               <Text
                 style={[
@@ -211,7 +262,7 @@ const Login = () => {
             icon={
               <Image
                 style={styles.icon}
-                source={require("../../assets/images/faceid.png")}
+                source={require("../../assets/images/google.png")}
               />
             }
             textColor="#4C69FF"
@@ -221,7 +272,7 @@ const Login = () => {
               borderWidth: 2,
               marginBottom: 20,
             }}
-            text="Login with Biometric"
+            text="Continue with Google"
           />
         </View>
       </ScrollView>
@@ -276,7 +327,7 @@ const styles = StyleSheet.create({
     height: 24,
     width: 24,
     position: "relative",
-    left: -50,
+    left: -30,
     top: 2,
     marginBottom: 5,
     alignSelf: "center",

@@ -9,7 +9,7 @@ import {
   View,
 } from "react-native";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "../../components/button";
 import SafeView from "../../components/safe-view";
 import TopTab from "../../components/toptab";
@@ -22,6 +22,8 @@ import {
 } from "firebase/auth";
 import { auth, db } from "../../services/firebase";
 import { doc, getDoc } from "firebase/firestore";
+import * as SecureStore from "expo-secure-store";
+import * as LocalAuthentication from "expo-local-authentication";
 
 const ExistingUser = () => {
   const [email, setEmail] = useState("");
@@ -29,6 +31,18 @@ const ExistingUser = () => {
   const [loading, setLoading] = useState(false);
   const { width, height } = Dimensions.get("screen");
   const [sendingmail, setSendingMail] = useState(false);
+
+  const [isBiometricSupported, setIsBiometricSupported] = useState(false);
+
+  useEffect(() => {
+    const checkBiometrics = async () => {
+      const compatible = await LocalAuthentication.hasHardwareAsync();
+      const enrolled = await LocalAuthentication.isEnrolledAsync();
+      // Set to `true` temporarily if you want to test the PIN fallback again!
+      setIsBiometricSupported(compatible && enrolled);
+    };
+    checkBiometrics();
+  }, []);
 
   const handleLogin = async () => {
     if (!email || password.length < 6) {
@@ -54,6 +68,9 @@ const ExistingUser = () => {
         }
       }
       await AsyncStorage.setItem("savedEmail", emailAddress);
+      await SecureStore.setItemAsync("Userpassword", password);
+
+      // router.replace("/Home");
     } catch (error) {
       const emailAddress = email.trim().toLowerCase();
 
