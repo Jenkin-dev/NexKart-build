@@ -64,7 +64,7 @@ const Settings = () => {
         setBioAuth(currentBioState);
       }
 
-      setshowBiotoggle(compatible && enrolled);
+      setshowBiotoggle(compatible);
 
       console.log(
         "Compatibility:",

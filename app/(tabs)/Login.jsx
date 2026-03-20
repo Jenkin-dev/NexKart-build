@@ -59,11 +59,11 @@ const Login = () => {
           rawBioAuth !== null ? JSON.parse(rawBioAuth) : false;
 
         setBioauth(isBioAllowed);
-        setIsBiometricSupported(compatible && enrolled);
+        setIsBiometricSupported(compatible);
 
-        if (compatible && enrolled && isBioAllowed) {
-          handleBiometricAuth();
-        }
+        // if (compatible && isBioAllowed) {
+        //   handleBiometricAuth();
+        // }
       } catch (e) {
         console.error("An error occured", e);
       }
